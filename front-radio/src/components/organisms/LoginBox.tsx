@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { setRegistering } from '../../store/slices/registerSlice';
 import { useRouter } from 'next/navigation';
-import { authenticatedUserAction } from '../../store/actions/authenticatedUser'
-import { setNewAuthenticatedUser } from '../../store/slices/registerSlice';
+import { setNewAuthenticatedUser, setAuthenticatedUser } from '../../store/slices/registerSlice';
 import { Action } from 'redux';
 import { Heading, Divider } from '@chakra-ui/react';
 import SocialLoginButtons from '../molecules/SocialLoginButtonsMolecule'
@@ -14,15 +13,16 @@ import HeadingAtom from '../atoms/HeadingAtom'
 import MotionMolecule from '../molecules/MotionMolecule'
 import LoginForm from '../molecules/LoginFormMolecule'
 
-type AuthenticatedUser = (payload: boolean) => Action;
-type NewAuthenticated = (payload: boolean) => Action;
+type AuthenticatedUserType = (payload: boolean) => Action;
+type NewAuthenticatedType = (payload: boolean) => Action;
 
 export default function LoginBox() {
 
     const dispatch = useDispatch();
     const router = useRouter();
+    
     const { isAuthenticated, isRegistering, isNewAuthenticated } = useSelector((state: RootState) => ({
-      isAuthenticated: state.authenticatedUserReducer.isAuthenticated,
+      isAuthenticated: state.register.isAuthenticated,
       isRegistering: state.register.isRegistering,
       isNewAuthenticated: state.register.isNewAuthenticated
     }));
@@ -37,27 +37,27 @@ export default function LoginBox() {
       event.preventDefault();
     };
   
-    // Redirect dinâmico para login e cadastro com Redux
-    const handleAuthentication = (
-      AuthenticatedUser: AuthenticatedUser,
-      NewAuthenticatedAction: NewAuthenticated
-      ) => {
-      router.push('/radio-browser');
-      dispatch(AuthenticatedUser(false));
-      dispatch(NewAuthenticatedAction(false));
-    };
-  
-    // Redirect após login
-    useEffect(() => {
+    //Redirect após login
+    useEffect(() => {   
       if (isAuthenticated) {
-        handleAuthentication(authenticatedUserAction, setNewAuthenticatedUser);
+        handleAuthentication(setAuthenticatedUser, setNewAuthenticatedUser);
       }
     }, [isAuthenticated, router, dispatch]);
-    
-    // Redirect após cadastro
+  
+    // Redirect dinâmico para login e cadastro com Redux
+    const handleAuthentication = (
+      setAuthenticatedUser: AuthenticatedUserType,
+      setNewAuthenticatedUser: NewAuthenticatedType
+      ) => {
+      router.push('/radio-browser');
+      dispatch(setAuthenticatedUser(false));
+      dispatch(setNewAuthenticatedUser(false));
+    };
+
+    //Redirect após cadastro
     useEffect(() => {
       if (isNewAuthenticated) {
-        handleAuthentication(authenticatedUserAction, setNewAuthenticatedUser);
+        handleAuthentication(setAuthenticatedUser, setNewAuthenticatedUser);
       }
     }, [isNewAuthenticated, router, dispatch]);
   
@@ -111,6 +111,5 @@ export default function LoginBox() {
                 </MotionMolecule>
             </HeadingAtom>
         </>
-
     )
 }
