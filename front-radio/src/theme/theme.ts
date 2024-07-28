@@ -1,18 +1,21 @@
 import { extendTheme, ThemeConfig, SystemStyleObject } from '@chakra-ui/react';
 
 const colors = {
-    light: {
-      primary: '#ffffff', // Branco para o fundo claro
-      secondary: '#000000', // Preto para o texto claro
-      accent: '#CCD5AE', // Cor de destaque para o modo claro (exemplo: laranja)
-    },
-    dark: {
-      primary: '#2F2F33', // Cor escura para o fundo
-      primarySideBar: '#ffffff', // Cor escura para o fundo
-      secondary: '#E9EDC9', // Cor clara para o texto
-      accent: '#1E1E21', // Cor de destaque para o modo escuro (exemplo: azul)
-    },
-  };
+  light: {
+    primary: '#ffffff', // Branco para o fundo claro
+    secondary: '#000000', // Preto para o texto claro
+    accent: '#CCD5AE', // Cor de destaque para o modo claro (exemplo: laranja)
+    fourth: '#c2cca0;', // Nova cor adicionada para o modo claro
+  },
+  dark: {
+    primary: '#2F2F33', // Cor escura para o fundo
+    primarySideBar: '#ffffff', // Cor escura para o fundo
+    secondary: '#E9EDC9', // Cor clara para o texto
+    accent: '#1E1E21', // Cor de destaque para o modo escuro (exemplo: azul)
+    fourth: '#4D4D56', // Nova cor adicionada para o modo escuro
+  },
+};
+
 
 // Estilos globais para o tema
 const globalStyles: (props: { colorMode: 'light' | 'dark' }) => SystemStyleObject = (props) => ({
