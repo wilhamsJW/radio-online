@@ -1,16 +1,16 @@
 import { Flex, Box, useTheme, useColorMode } from '@chakra-ui/react';
 import MenuComponent from '../organisms/Menu';
 import { ListRadioStations } from '../organisms/ListRadioStations';
+import CustomHeadingProps from '../atoms/HeadingAtom'
+import HeaderFavoritesRadioOrganism from '../organisms/HeaderFavoritesRadioOrganism'
 
 const RadioLayout: React.FC = () => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
 
-  // Definindo as cores com base no modo de cor
   const sidebarBg = theme.colors[colorMode].accent;
   const mainBg = theme.colors[colorMode].primary;
   const textColor = theme.colors[colorMode].secondary;
-  const lisStationBg = theme.colors[colorMode].fourth
 
   return (
     <Flex h="100vh" direction="row">
@@ -22,15 +22,14 @@ const RadioLayout: React.FC = () => {
         display={{ base: 'none', md: 'block' }} // Ocultar em resoluções menores
         bg={sidebarBg}
         overflowY="auto"
-        overflow="hidden" // Cuidado com overflow escondendo conteúdo
-        position="relative" // Garante que o Box pai é o contexto de posicionamento
+        overflow="hidden"
+        position="relative"
       >
-        {/* Menu Component dentro do Box pai */}
         <Box
           position="absolute"
           top={4}
           right={4}
-          zIndex="modal" // Verifique se 'modal' está configurado corretamente no tema
+          zIndex="modal"
         >
           <MenuComponent />
         </Box>
@@ -40,7 +39,7 @@ const RadioLayout: React.FC = () => {
           position="absolute"
           top={16}
           left={4}
-          zIndex="0" // Certifique-se de que o zIndex é menor que o do menu se necessário
+          zIndex="0"
           w="full"
           maxW="calc(100% - 16px)"
           maxH="calc(100vh - 64px)"
@@ -48,8 +47,8 @@ const RadioLayout: React.FC = () => {
           p={4}
         >
           <ListRadioStations />
-        </Box> {/** Fim da área das rádios listadas */}
-      </Box> {/** Fim Box que envolver área geral das rádios listadas */}
+        </Box>
+      </Box>
 
       {/* Menu Component visível em resoluções menores */}
       <Box
@@ -65,18 +64,18 @@ const RadioLayout: React.FC = () => {
       {/** Área da lista de estações de rádio favorita */}
       <Box w={{ base: '100%', md: '80.9%' }} p={4} bg={mainBg}>
         <Flex direction="column" h="100%" bg={mainBg} color={textColor}>
-          <Box>
-            INICIANDO PROJETO
-            <Box>INICIANDO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</Box>
-          </Box>
-          <Box>
-            Outro texto
-            <Box>outro dentro</Box>
+          <CustomHeadingProps text={'Rádio Browser'} color={textColor} textAlign='center' pt='1rem' />
+          <Box
+            position="relative"
+            maxH="82vh"
+            borderRadius={10}
+            overflow={'hidden'}
+          >
+            <HeaderFavoritesRadioOrganism />
           </Box>
         </Flex>
-      </Box>
+      </Box> {/** Fim lista de estações */}
     </Flex>
-
   );
 };
 
