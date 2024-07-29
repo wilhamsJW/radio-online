@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Input, Button, VStack, Divider, Flex, HStack, Icon, useTheme, useColorMode } from '@chakra-ui/react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Importar ícones
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 export const ListRadioStations = () => {
   const [search, setSearch] = useState('');
@@ -23,7 +23,7 @@ export const ListRadioStations = () => {
 
   const handleRadioClick = (radio: string) => {
     setSelectedRadio(radio);
-    // Aqui você pode implementar lógica adicional, como adicionar à lista de favoritos
+    // implementar a partir daqui adição de favoritas radios
     console.log(`Selecionado: ${radio}`);
   };
 
@@ -61,7 +61,8 @@ export const ListRadioStations = () => {
             p={4}
             textAlign="left"
             w="full" // Faz com que o botão ocupe toda a largura disponível do VStack
-            alignSelf="flex-start" // Garante que o botão fique alinhado à esquerda
+            alignSelf="flex-start"
+            fontSize="sm"
           >
             {radio}
           </Button>
