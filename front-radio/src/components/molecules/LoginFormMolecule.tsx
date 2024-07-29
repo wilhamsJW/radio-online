@@ -10,7 +10,7 @@ import { EmailIcon, LockIcon } from "@chakra-ui/icons";
 import { AiOutlineUser } from 'react-icons/ai';
 import { signInWithEmailAndPassword } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
-import { authenticatedUserAction } from '../../store/actions/authenticatedUser'
+import { setAuthenticatedUser } from '../../store/slices/registerSlice'
 import { getAuth, createUserWithEmailAndPassword, updateProfile  } from "firebase/auth";
 import { setNewAuthenticatedUser } from '../../store/slices/registerSlice';
 
@@ -54,8 +54,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
     // ATUAL
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      dispatch(authenticatedUserAction(true));
-      console.log('userCredential', userCredential);
+      dispatch(setAuthenticatedUser(true));
+      console.log('userCredential no loginFormMolecule', userCredential);
     } catch (error) {
       console.error("Erro ao autenticar:", error);
       setError('Erro desconhecido'); 
