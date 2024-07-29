@@ -42,10 +42,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3182ce; /* cor do "polegar" do scrollbar */
-  border-radius: 4px;
+  background: #4D4D56; /* cor do "polegar" do scrollbar */
+  border-radius: 1px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #63b3ed; /* cor do "polegar" quando o mouse passa por cima */
+  background: #6d6d79; /* cor do "polegar" quando o mouse passa por cima */
 }
