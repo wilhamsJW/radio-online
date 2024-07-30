@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input } from '@chakra-ui/react';
+import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import useStations from '../../hooks/useStations';
+import { useDispatch } from 'react-redux';
+import { setIsNewStationFavorite } from '../../store/slices/registerSlice'
 
 interface RadioStation {
   name: string;
@@ -15,6 +17,8 @@ interface RadioStation {
 const ListRadioStations: React.FC = () => {
   const rowsPerPage = 10; // Número de itens por página
   const [currentPage, setCurrentPage] = useState(1);
+  const dispatch = useDispatch();
+  const toast = useToast();
 
   useEffect(() => {
     const savedPage = localStorage.getItem('currentPage');
@@ -59,8 +63,24 @@ const ListRadioStations: React.FC = () => {
     const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
     if (!allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavorite.name)) {
       allSelectedRadioStations.push(newStationFavorite);
+      toast({
+        title: "Estação de rádio adicionada com sucesso.",
+        description: "",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Esta estação de rádio já foi adicionada.",
+        description: "",
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
     }
     localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
+    dispatch(setIsNewStationFavorite(true))
   };
 
   const truncateText = (text: string, maxLength: number) => {
