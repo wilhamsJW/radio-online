@@ -1,31 +1,49 @@
-import React, { useState } from 'react';
-import { Box, Input, Button, VStack, Divider, Flex, HStack, Icon, useTheme, useColorMode } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import useStations from '../../hooks/useStations';
 
-export const ListRadioStations = () => {
-  const [search, setSearch] = useState('');
-  const [selectedRadio, setSelectedRadio] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const radios = Array.from({ length: 20 }, (_, i) => `Rádio ${i + 1}`); // Gerar 20 rádios
-  const rowsPerPage = 10;
+interface RadioStation {
+  name: string;
+  url: string;
+  votes: number;
+  country: string;
+  language: string;
+  countrycode: string;
+}
 
-  const filteredRadios = radios.filter(radio => radio.toLowerCase().includes(search.toLowerCase()));
-  const theme = useTheme();
-  const { colorMode } = useColorMode();
-  const lisStationBg = theme.colors[colorMode].fourth
-  const textColor = theme.colors[colorMode].secondary;
+const ListRadioStations: React.FC = () => {
+  const rowsPerPage = 10; // Número de itens por página
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Recupera a página atual do localStorage, se disponível
+    const savedPage = localStorage.getItem('currentPage');
+    return savedPage ? parseInt(savedPage, 10) : 1;
+  });
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Paginação
+  const { data, error, isLoading } = useStations(currentPage);
+
+  useEffect(() => {
+    // Salva a página atual no localStorage sempre que mudar
+    localStorage.setItem('currentPage', currentPage.toString());
+  }, [currentPage]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) {
+    const errorMessage = (error as Error)?.message || 'Error fetching stations';
+    return <div>{errorMessage}</div>;
+  }
+
+  // Filtra os dados com base no termo de busca
+  const filteredRadios = data ? data.filter(station => 
+    station.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
+
+  // Pagina os dados filtrados
+  const paginatedRadios = filteredRadios.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  // Calcula o número total de páginas baseado na quantidade de dados filtrados
   const totalPages = Math.ceil(filteredRadios.length / rowsPerPage);
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const paginatedRadios = filteredRadios.slice(startIndex, endIndex);
-
-  const handleRadioClick = (radio: string) => {
-    setSelectedRadio(radio);
-    // implementar a partir daqui adição de favoritas radios
-    console.log(`Selecionado: ${radio}`);
-  };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -33,57 +51,71 @@ export const ListRadioStations = () => {
     }
   };
 
+  const handleRadioClick = (station: RadioStation) => {
+    console.log('Radio clicked:', station);
+  };
+
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
+
   return (
     <Box
       position="relative"
-      maxH="90vh" // Define a altura máxima para não ultrapassar a tela
-      overflowY="auto" // Adiciona a rolagem vertical se necessário
+      maxH="90vh"
+      overflowY="auto"
       p={4}
     >
-      {/* Campo de pesquisa */}
+      {/* Campo de busca */}
       <Input
-        placeholder="Pesquisar rádio"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
         mb={4}
-        onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* Lista de rádios */}
       <VStack spacing={3} align="stretch">
-        {paginatedRadios.map((radio, index) => (
-          <Button
-            key={index}
-            onClick={() => handleRadioClick(radio)}
-            bg={lisStationBg}
-            color={textColor}
-            borderRadius="md"
-            boxShadow="md"
-            _hover={{ bg: "gray.200" }}
-            p={4}
-            textAlign="left"
-            w="full" // Faz com que o botão ocupe toda a largura disponível do VStack
-            alignSelf="flex-start"
-            fontSize="sm"
-          >
-            {radio}
-          </Button>
-        ))}
+        {paginatedRadios.length > 0 ? (
+          paginatedRadios.map((station: RadioStation, index: number) => (
+            <Button
+              key={index}
+              onClick={() => handleRadioClick(station)}
+              bg="gray.100"
+              color="black"
+              borderRadius="md"
+              boxShadow="md"
+              _hover={{ bg: "gray.200" }}
+              p={8}
+              textAlign="left"
+              w="full"
+              alignSelf="center"
+              fontSize="sm"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {truncateText(station.name, 12)}
+            </Button>
+          ))
+        ) : (
+          <div>No stations available.</div>
+        )}
       </VStack>
 
       <Divider my={4} />
 
-      {/* Paginação */}
       <Flex justify="center" mt={4}>
         <HStack spacing={2}>
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
-            isDisabled={currentPage === 1}
+            isDisabled={currentPage <= 1}
             aria-label="Página anterior"
           >
             <Icon as={FaChevronLeft} />
           </Button>
           <Button
             onClick={() => handlePageChange(currentPage + 1)}
-            isDisabled={currentPage === totalPages}
+            isDisabled={currentPage >= totalPages}
             aria-label="Próxima página"
           >
             <Icon as={FaChevronRight} />
@@ -93,3 +125,5 @@ export const ListRadioStations = () => {
     </Box>
   );
 };
+
+export default ListRadioStations;
