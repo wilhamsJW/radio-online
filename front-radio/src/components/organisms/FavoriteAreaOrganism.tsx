@@ -3,6 +3,9 @@ import { Box, Table, Tbody, Tr, Td, Text, Button, Flex, useTheme, useColorMode, 
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import MotionMolecule from '../../components/molecules/MotionMolecule';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/store';
+import { setIsNewStationFavorite } from '../../store/slices/registerSlice';
 
 interface RadioStation {
   id: number;
@@ -10,6 +13,7 @@ interface RadioStation {
   country: string;
   language: string;
   isPlaying: boolean;
+  changeuuid: string;
 }
 
 interface FavoriteAreaOrganismProps {
@@ -19,194 +23,62 @@ interface FavoriteAreaOrganismProps {
 const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = '' }) => {
   const [data, setData] = useState<RadioStation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editItemId, setEditItemId] = useState<number | null>(null);
+  const [editItemId, setEditItemId] = useState<string>('');
   const [editName, setEditName] = useState('');
   const [editCountry, setEditCountry] = useState('');
   const [editLanguage, setEditLanguage] = useState('');
-  const rowsPerPage = 10;
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filteredData, setFilteredData] = useState<RadioStation[]>([]);
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const textColor = theme.colors[colorMode].secondary;
   const { colors } = theme;
   const toast = useToast();
+  const dispatch = useDispatch();
+  const { isNewStationFavorite } = useSelector((state: RootState) => ({
+    isNewStationFavorite: state.register.isNewStationFavorite
+  }));
 
   useEffect(() => {
-    const storedData = localStorage.getItem('radioStations');
-    if (storedData) {
-      setData(JSON.parse(storedData));
-    } else {
-      // Dados iniciais de test
-      setData([
-        {
-          "id": 1,
-          "name": "Harmony FM",
-          "country": "USA",
-          "language": "English",
-          "isPlaying": false
-        },
-        {
-          "id": 2,
-          "name": "Rádio Vibrante",
-          "country": "Brazil",
-          "language": "Portuguese",
-          "isPlaying": true
-        },
-        {
-          "id": 3,
-          "name": "Beats of Berlin",
-          "country": "Germany",
-          "language": "German",
-          "isPlaying": false
-        },
-        {
-          "id": 4,
-          "name": "Melodia Latina",
-          "country": "Spain",
-          "language": "Spanish",
-          "isPlaying": false
-        },
-        {
-          "id": 5,
-          "name": "Radio Nova",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 6,
-          "name": "Tokyo Vibes",
-          "country": "Japan",
-          "language": "Japanese",
-          "isPlaying": true
-        },
-        {
-          "id": 7,
-          "name": "Sunset Beats",
-          "country": "Australia",
-          "language": "English",
-          "isPlaying": false
-        },
-        {
-          "id": 8,
-          "name": "Rádio Alegre",
-          "country": "Portugal",
-          "language": "Portuguese",
-          "isPlaying": false
-        },
-        {
-          "id": 9,
-          "name": "Nova 9",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 10,
-          "name": "Sou",
-          "country": "Germany",
-          "language": "German",
-          "isPlaying": true
-        },
-        {
-          "id": 11,
-          "name": "Inglesa",
-          "country": "England",
-          "language": "English",
-          "isPlaying": false
-        },
-        {
-          "id": 12,
-          "name": "Echo de Paris",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 13,
-          "name": "Nova 13",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 14,
-          "name": "Radio Pan",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 15,
-          "name": "Nova 15",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 16,
-          "name": "Nova 16",
-          "country": "France",
-          "language": "French",
-          "isPlaying": false
-        },
-        {
-          "id": 17,
-          "name": "Bão de Mais",
-          "country": "Brazil",
-          "language": "Portuguese",
-          "isPlaying": false
-        },
-        {
-          "id": 18,
-          "name": "Vibes International",
-          "country": "Various",
-          "language": "Various",
-          "isPlaying": false
-        },
-        {
-          "id": 19,
-          "name": "AAA Radio",
-          "country": "Unknown",
-          "language": "Unknown",
-          "isPlaying": false
-        },
-        {
-          "id": 20,
-          "name": "Tirulipa FM",
-          "country": "Brazil",
-          "language": "Portuguese",
-          "isPlaying": false
-        }
-      ]);
-      
+    // Update data when isNewStationFavorite changes
+    if (isNewStationFavorite) {
+      const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+      setData(allSelectedRadioStations);
+      dispatch(setIsNewStationFavorite(false));
     }
-  }, []);
+  }, [isNewStationFavorite, dispatch]);
 
-  // Filtra os dados com base no valor do filtro
-  const filteredData = data.filter(
-    item =>
-      item.name.toLowerCase().includes(filter.toLowerCase()) ||
-      item.country.toLowerCase().includes(filter.toLowerCase()) ||
-      item.language.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    // Filter the data based on the filter value
+    const newFilteredData = data.filter(
+      item =>
+        item.name.toLowerCase().includes(filter.toLowerCase()) ||
+        item.country.toLowerCase().includes(filter.toLowerCase()) ||
+        item.language.toLowerCase().includes(filter.toLowerCase())
+    );
+    setFilteredData(newFilteredData);
+    setCurrentPage(1); // Reset page to 1 when filtering
+  }, [data, filter]);
 
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
+  useEffect(() => {
+    // Handle pagination based on the filtered data
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const newPaginatedData = filteredData.slice(startIndex, endIndex);
+
+    // Ensure page bounds are maintained
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [filteredData, currentPage, rowsPerPage]);
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  const saveDataToLocalStorage = (data: RadioStation[]) => {
-    localStorage.setItem('radioStations', JSON.stringify(data));
+    setCurrentPage(page);
   };
 
   const handleEdit = (item: RadioStation) => {
-    setEditItemId(item.id);
+    setEditItemId(item.changeuuid);
     setEditName(item.name);
     setEditCountry(item.country);
     setEditLanguage(item.language);
@@ -214,12 +86,12 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   const handleSave = () => {
     const updatedData = data.map(item =>
-      item.id === editItemId
+      item.changeuuid === editItemId
         ? { ...item, name: editName, country: editCountry, language: editLanguage }
         : item
     );
     setData(updatedData);
-    saveDataToLocalStorage(updatedData);
+    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedData));
     toast({
       title: "Dados salvos",
       description: "As alterações foram salvas com sucesso.",
@@ -227,13 +99,13 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       duration: 3000,
       isClosable: true,
     });
-    setEditItemId(null);
+    setEditItemId('');
   };
 
-  const handleDelete = (id: number) => {
-    const updatedData = data.filter(item => item.id !== id);
+  const handleDelete = (id: string) => {
+    const updatedData = data.filter(item => item.changeuuid !== id);
     setData(updatedData);
-    saveDataToLocalStorage(updatedData);
+    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedData));
     toast({
       title: "Rádio excluída",
       description: "",
@@ -249,12 +121,35 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
     ));
   };
 
+  const handleChange = (field: 'name' | 'country' | 'language', value: string) => {
+    switch (field) {
+      case 'name':
+        setEditName(value);
+        break;
+      case 'country':
+        setEditCountry(value);
+        break;
+      case 'language':
+        setEditLanguage(value);
+        break;
+    }
+
+    const updatedSelectedStations = data.map(d =>
+      d.changeuuid === editItemId
+        ? { ...d, name: field === 'name' ? value : d.name, country: field === 'country' ? value : d.country, language: field === 'language' ? value : d.language }
+        : d
+    );
+
+    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedSelectedStations));
+    setData(updatedSelectedStations);
+  };
+
   return (
     <Box overflowY="auto" maxH="100%">
       <Table overflowY="auto" maxH="22vh" variant="simple">
         <Tbody>
-          {paginatedData.map((item) => (
-            <Tr key={item.id}>
+          {filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((item, index) => (
+            <Tr key={index}>
               <Td>
                 <Flex align="center">
                   <MotionMolecule whileHover={{ scale: 1.2 }}>
@@ -269,25 +164,24 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                     />
                   </MotionMolecule>
 
-                  {/** Edição de nome de rádio, país e idioma */}
                   <Flex direction="column" ml={4}>
-                    {editItemId === item.id ? (
+                    {editItemId === item.changeuuid ? (
                       <>
                         <Input
                           value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
+                          onChange={(e) => handleChange('name', e.target.value)}
                           mb={2}
                           placeholder="Name"
                         />
                         <Input
                           value={editCountry}
-                          onChange={(e) => setEditCountry(e.target.value)}
+                          onChange={(e) => handleChange('country', e.target.value)}
                           mb={2}
                           placeholder="Country"
                         />
                         <Input
                           value={editLanguage}
-                          onChange={(e) => setEditLanguage(e.target.value)}
+                          onChange={(e) => handleChange('language', e.target.value)}
                           mb={2}
                           placeholder="Language"
                         />
@@ -303,14 +197,13 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                         </Text>
                       </>
                     )}
-                  </Flex> {/** Fim */}
-
+                  </Flex>
                 </Flex>
               </Td>
               <Td>
                 <Flex justify="flex-end">
-                  {editItemId === item.id ? (
-                    <Button onClick={() => setEditItemId(null)}>Cancel</Button>
+                  {editItemId === item.changeuuid ? (
+                    <Button onClick={() => setEditItemId('')}>Cancel</Button>
                   ) : (
                     <MotionMolecule whileHover={{ scale: 1.2 }}>
                       <IconButton
@@ -327,7 +220,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                     <IconButton
                       aria-label="Delete"
                       icon={<DeleteIcon color={colors.red[400]} />}
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => handleDelete(item.changeuuid)}
                       bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                       _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
                     />
@@ -338,14 +231,14 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
           ))}
         </Tbody>
       </Table>
-      <Flex justify="space-between" mt={4}>
+      <Flex mt={4} justify="space-between">
         <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
           Previous
         </Button>
         <Text>
-          Page {currentPage} of {totalPages}
+          Page {currentPage} of {Math.ceil(filteredData.length / rowsPerPage)}
         </Text>
-        <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredData.length / rowsPerPage)}>
           Next
         </Button>
       </Flex>
