@@ -40,7 +40,11 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   }));
 
   useEffect(() => {
-    // Update data when isNewStationFavorite changes
+    const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+    setData(allSelectedRadioStations)
+  }, [])
+
+  useEffect(() => {
     if (isNewStationFavorite) {
       const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
       setData(allSelectedRadioStations);
@@ -49,7 +53,6 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   }, [isNewStationFavorite, dispatch]);
 
   useEffect(() => {
-    // Filter the data based on the filter value
     const newFilteredData = data.filter(
       item =>
         item.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -57,17 +60,15 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
         item.language.toLowerCase().includes(filter.toLowerCase())
     );
     setFilteredData(newFilteredData);
-    setCurrentPage(1); // Reset page to 1 when filtering
+    setCurrentPage(1); 
   }, [data, filter]);
 
   useEffect(() => {
-    // Handle pagination based on the filtered data
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const newPaginatedData = filteredData.slice(startIndex, endIndex);
+    //const startIndex = (currentPage - 1) * rowsPerPage;
+    //const endIndex = startIndex + rowsPerPage;
+    //const newPaginatedData = filteredData.slice(startIndex, endIndex);
 
-    // Ensure page bounds are maintained
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
@@ -140,6 +141,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
         : d
     );
 
+    // Atualizo no storage ou poderia ser numa API
     localStorage.setItem('selectedRadioStations', JSON.stringify(updatedSelectedStations));
     setData(updatedSelectedStations);
   };
