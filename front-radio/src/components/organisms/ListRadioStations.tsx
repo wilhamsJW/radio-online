@@ -14,11 +14,15 @@ interface RadioStation {
 
 const ListRadioStations: React.FC = () => {
   const rowsPerPage = 10; // Número de itens por página
-  const [currentPage, setCurrentPage] = useState(() => {
-    // Recupera a página atual do localStorage, se disponível
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
     const savedPage = localStorage.getItem('currentPage');
-    return savedPage ? parseInt(savedPage, 10) : 1;
-  });
+    if (savedPage) {
+      setCurrentPage(parseInt(savedPage, 10))
+    }
+  }, [])
+  
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data, error, isLoading } = useStations(currentPage);
@@ -39,7 +43,7 @@ const ListRadioStations: React.FC = () => {
     station.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 
-  // Pagina os dados filtrados
+  // Pagina os dados filtrados - Divisão do array para montar a paginação com slice
   const paginatedRadios = filteredRadios.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   // Calcula o número total de páginas baseado na quantidade de dados filtrados
