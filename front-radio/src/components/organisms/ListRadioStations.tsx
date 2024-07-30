@@ -22,7 +22,7 @@ const ListRadioStations: React.FC = () => {
       setCurrentPage(parseInt(savedPage, 10))
     }
   }, [])
-  
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data, error, isLoading } = useStations(currentPage);
@@ -39,7 +39,7 @@ const ListRadioStations: React.FC = () => {
   }
 
   // Filtra os dados com base no termo de busca
-  const filteredRadios = data ? data.filter(station => 
+  const filteredRadios = data ? data.filter(station =>
     station.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 
@@ -55,8 +55,12 @@ const ListRadioStations: React.FC = () => {
     }
   };
 
-  const handleRadioClick = (station: RadioStation) => {
-    console.log('Radio clicked:', station);
+  const handleRadioClick = (newStationFavorite: RadioStation) => {
+    const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+    if (!allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavorite.name)) {
+      allSelectedRadioStations.push(newStationFavorite);
+    }
+    localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
   };
 
   const truncateText = (text: string, maxLength: number) => {
