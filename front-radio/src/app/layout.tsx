@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import ChakraProviderWrapper from './chakra-provider';
 import ClientProviderRedux from './reduxProvider/reduxProvider';
-//import { QueryClient, QueryClientProvider } from 'react-query';
 import ClientQueryProvider from './clientQueryProvider/ClientQueryProvider'
 import { metadata } from './metadata';
 
