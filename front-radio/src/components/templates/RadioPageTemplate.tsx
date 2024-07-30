@@ -1,6 +1,8 @@
+'use client'
+
 import { Flex, Box, useTheme, useColorMode } from '@chakra-ui/react';
 import MenuComponent from '../organisms/Menu';
-import { ListRadioStations } from '../organisms/ListRadioStations';
+import ListRadioStations  from '../organisms/ListRadioStations';
 import CustomHeadingProps from '../atoms/HeadingAtom'
 import HeaderFavoritesRadioOrganism from '../organisms/HeaderFavoritesRadioOrganism'
 
@@ -16,7 +18,7 @@ const RadioLayout: React.FC = () => {
     <Flex h="100vh" direction="row">
       {/* Box pai apenas visível em resoluções maiores que 'md' */}
       <Box
-        w={{ base: '100%', md: '25.1%' }}
+        w={{ base: '100%', md: '40.1%' }}
         height="100vh"
         p={4}
         display={{ base: 'none', md: 'block' }} // Ocultar em resoluções menores
