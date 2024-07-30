@@ -5,7 +5,7 @@ import { FaRadio } from 'react-icons/fa6';
 import { CiLogout } from 'react-icons/ci';
 import { auth } from '../../lib/firebase';
 import { useRouter } from 'next/navigation';
-import SideBarRadioMolecule from '../molecules/SideBarRadioMolecule';
+import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
 
 const MenuComponent: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -53,7 +53,7 @@ const MenuComponent: React.FC = () => {
         </MenuItem>
       </MenuList>
       {/* Drawer para Favorites */}
-      <SideBarRadioMolecule isOpen={isOpen} onClose={onClose} />
+      <DrawerMobileMolecule isOpen={isOpen} onClose={onClose} />
     </Menu>
   );
 };

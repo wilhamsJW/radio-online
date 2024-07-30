@@ -6,7 +6,7 @@ interface SideBarRadioMoleculeProps {
   onClose: () => void;
 }
 
-const SideBarRadioMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onClose }) => {
+const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onClose }) => {
   return (
     <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
@@ -20,4 +20,4 @@ const SideBarRadioMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
   );
 };
 
-export default SideBarRadioMolecule;
+export default DrawerMobileMolecule;
