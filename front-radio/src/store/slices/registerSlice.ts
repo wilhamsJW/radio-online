@@ -3,13 +3,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface RegisterState {
   isRegistering: boolean;
   isAuthenticated: boolean;
-  isNewAuthenticated: boolean
+  isNewAuthenticated: boolean;
+  isNewStationFavorite: boolean
 }
 
 const initialState: RegisterState = {
   isRegistering: false,
   isAuthenticated: false,
-  isNewAuthenticated: false
+  isNewAuthenticated: false,
+  isNewStationFavorite: false
 };
 
 const registerSlice = createSlice({
@@ -24,9 +26,12 @@ const registerSlice = createSlice({
     },
     setNewAuthenticatedUser(state, action: PayloadAction<boolean>) {
       state.isNewAuthenticated = action.payload;
+    },
+    setIsNewStationFavorite(state, action: PayloadAction<boolean>) {
+      state.isNewStationFavorite = action.payload
     }
   },
 });
 
-export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser  } = registerSlice.actions;
+export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite  } = registerSlice.actions;
 export default registerSlice.reducer;
