@@ -4,6 +4,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import useStations from '../../hooks/useStations';
 import { useDispatch } from 'react-redux';
 import { setIsNewStationFavorite } from '../../store/slices/registerSlice'
+import { auth } from '../../lib/firebase'; // Certifique-se de que o caminho está correto
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 interface RadioStation {
   name: string;
@@ -12,6 +14,7 @@ interface RadioStation {
   country: string;
   language: string;
   countrycode: string;
+  userId?: string
 }
 
 const ListRadioStations: React.FC = () => {
@@ -23,6 +26,17 @@ const ListRadioStations: React.FC = () => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const listStationsBg = theme.colors[colorMode].fourth;
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    // Limpeza do listener quando o componente desmonta
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const savedPage = localStorage.getItem('currentPage');
@@ -64,9 +78,14 @@ const ListRadioStations: React.FC = () => {
   };
 
   const handleRadioClick = (newStationFavorite: RadioStation) => {
+    // Aqui inicia a seleção de rádio
+    const newStationFavoriteWithUser = {
+      ...newStationFavorite,
+      userId: user?.email
+    };
     const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
-    if (!allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavorite.name)) {
-      allSelectedRadioStations.push(newStationFavorite);
+    if (!allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavoriteWithUser.name)) {
+      allSelectedRadioStations.push(newStationFavoriteWithUser);
       toast({
         title: "Estação de rádio adicionada com sucesso.",
         description: "",
@@ -100,7 +119,7 @@ const ListRadioStations: React.FC = () => {
     >
       {/* Campo de busca */}
       <Input
-        placeholder="Search by name..."
+        placeholder="Pesquise estação de rádios"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         mb={4}
