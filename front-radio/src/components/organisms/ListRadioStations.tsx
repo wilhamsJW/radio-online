@@ -74,7 +74,7 @@ const ListRadioStations: React.FC = () => {
       toast({
         title: "Esta estação de rádio já foi adicionada.",
         description: "",
-        status: "info",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });

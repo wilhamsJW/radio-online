@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Table, Tbody, Tr, Td, Text, Button, Flex, useTheme, useColorMode, IconButton, useToast, Input } from '@chakra-ui/react';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import MotionMolecule from '../../components/molecules/MotionMolecule';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setIsNewStationFavorite, setAudioState, setIsPlaying, setIsNewUrlAudio } from '../../store/slices/registerSlice';
-import AudioPlayer from '../molecules/AudioPlayerMolecule';
+import { setIsNewStationFavorite, setIsPlaying, setIsNewUrlAudio } from '../../store/slices/registerSlice';
+import { Howl } from 'howler';
+import AudioPlayer from '../molecules/AudioPlayerMolecule'
+
 
 interface RadioStation {
   id: number;
@@ -15,11 +17,18 @@ interface RadioStation {
   language: string;
   isPlaying: boolean;
   changeuuid: string;
-  url?: string;
+  url?: string
 }
 
 interface FavoriteAreaOrganismProps {
   filter?: string;
+}
+
+export interface AudioPlayerHandle {
+  play: () => Promise<void>;
+  pause: () => Promise<void>;
+  setSrc: (newUrl: string) => void;
+
 }
 
 const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = '' }) => {
@@ -37,17 +46,16 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const { colors } = theme;
   const toast = useToast();
   const dispatch = useDispatch();
-  const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite } = useSelector((state: RootState) => ({
-    currentAudioId: state.register.currentAudioId,
-    currentAudioUrl: state.register.currentAudioUrl,
-    currentAudioIsPlaying: state.register.currentAudioIsPlaying,
-    isNewStationFavorite: state.register.isNewStationFavorite
+  const [newUrl, setNewUrl] = useState('')
+  const { isNewStationFavorite, isPlaying } = useSelector((state: RootState) => ({
+    isNewStationFavorite: state.register.isNewStationFavorite,
+    isPlaying: state.register.isPlaying
   }));
 
   useEffect(() => {
     const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
-    setData(allSelectedRadioStations);
-  }, []);
+    setData(allSelectedRadioStations)
+  }, [])
 
   useEffect(() => {
     if (isNewStationFavorite) {
@@ -58,20 +66,22 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   }, [isNewStationFavorite, dispatch]);
 
   useEffect(() => {
-    if (data.length > 0) {
-      const newFilteredData = data.filter(
-        item =>
-          item.name.toLowerCase().includes(filter.toLowerCase()) ||
-          item.country.toLowerCase().includes(filter.toLowerCase()) ||
-          item.language.toLowerCase().includes(filter.toLowerCase())
-      );
-      setFilteredData(newFilteredData);
-      setCurrentPage(1);
-    }
+    const newFilteredData = data.filter(
+      item =>
+        item.name.toLowerCase().includes(filter.toLowerCase()) ||
+        item.country.toLowerCase().includes(filter.toLowerCase()) ||
+        item.language.toLowerCase().includes(filter.toLowerCase())
+    );
+    setFilteredData(newFilteredData);
+    setCurrentPage(1);
   }, [data, filter]);
 
   useEffect(() => {
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    //const startIndex = (currentPage - 1) * rowsPerPage;
+    //const endIndex = startIndex + rowsPerPage;
+    //const newPaginatedData = filteredData.slice(startIndex, endIndex);
+
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
@@ -80,20 +90,6 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  const handlePlayStop = (changeuuid: string, url: string | undefined) => {
-    if (currentAudioId && currentAudioId !== changeuuid) {
-      dispatch(setAudioState({ changeuuid: currentAudioId, url: currentAudioUrl || '', isPlaying: !currentAudioIsPlaying  }));
-    }
-  
-    if (currentAudioId === changeuuid && currentAudioIsPlaying) {
-      dispatch(setAudioState({ changeuuid, url: currentAudioUrl || '', isPlaying: false }));
-    } else {
-      dispatch(setAudioState({ changeuuid, url: url || '', isPlaying: true }));
-      dispatch(setIsNewUrlAudio(url || ''));
-    }
-  };
-  
 
   const handleEdit = (item: RadioStation) => {
     setEditItemId(item.changeuuid);
@@ -133,6 +129,18 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
     });
   };
 
+  //const [audio] = useState(new Audio('http://stream.funradio.sk:8000/fun128.mp3'));
+
+    const handlePlayStop = (changeuuid: string, url: string | undefined) => {
+      if (url) {
+        dispatch(setIsNewUrlAudio(url)); // Atualiza a URL no Redux
+        //setIsPlaying(prev => !prev); // Alterna o estado de reprodução
+        dispatch(setIsPlaying(true))
+      } else {
+        console.error('URL is undefined');
+      }
+    };
+
   const handleChange = (field: 'name' | 'country' | 'language', value: string) => {
     switch (field) {
       case 'name':
@@ -152,6 +160,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
         : d
     );
 
+    // Atualizo no storage ou poderia ser numa API
     localStorage.setItem('selectedRadioStations', JSON.stringify(updatedSelectedStations));
     setData(updatedSelectedStations);
   };
@@ -165,17 +174,20 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
               <Td>
                 <Flex align="center">
                   <MotionMolecule whileHover={{ scale: 1.2 }}>
+
+                    {/* {item.url && <AudioPlayer url={item.url} />} */}
+                    {/* <AudioPlayer url={item.url} /> */}
                     <IconButton
-                      aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
-                      icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ? <FaStop color={theme.colors.red[500]} /> : <FaPlay color={theme.colors.green[300]} />}
+                      aria-label={isPlaying ? 'Stop' : 'Play'}
+                      icon={isPlaying ? <FaStop color={theme.colors.red[500]} /> : <FaPlay color={theme.colors.green[300]} />}
                       onClick={() => handlePlayStop(item.changeuuid, item.url ? item.url : '')}
                       bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                       _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
                       mr={4}
                       ml={6}
-                      isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
                     />
-                    <AudioPlayer audioId={item.url} />
+                    <AudioPlayer />
+
                   </MotionMolecule>
 
                   <Flex direction="column" ml={4}>
@@ -222,37 +234,39 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                     <MotionMolecule whileHover={{ scale: 1.2 }}>
                       <IconButton
                         aria-label="Edit"
-                        icon={<EditIcon />}
+                        icon={<EditIcon color={textColor} />}
+                        mr={2}
                         onClick={() => handleEdit(item)}
-                        bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                        _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
-                      />
-                      <IconButton
-                        aria-label="Delete"
-                        icon={<DeleteIcon />}
-                        onClick={() => handleDelete(item.changeuuid)}
                         bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                         _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
                       />
                     </MotionMolecule>
                   )}
+                  <MotionMolecule whileHover={{ scale: 1.2 }}>
+                    <IconButton
+                      aria-label="Delete"
+                      icon={<DeleteIcon color={colors.red[400]} />}
+                      onClick={() => handleDelete(item.changeuuid)}
+                      bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
+                      _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
+                    />
+                  </MotionMolecule>
                 </Flex>
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
-      <Flex justify="center" mt={4}>
-        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }).map((_, index) => (
-          <Button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            mx={1}
-            variant={index + 1 === currentPage ? 'solid' : 'outline'}
-          >
-            {index + 1}
-          </Button>
-        ))}
+      <Flex mt={4} justify="space-between">
+        <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+          Previous
+        </Button>
+        <Text>
+          Page {currentPage} of {Math.ceil(filteredData.length / rowsPerPage)}
+        </Text>
+        <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredData.length / rowsPerPage)}>
+          Next
+        </Button>
       </Flex>
     </Box>
   );

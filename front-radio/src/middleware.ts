@@ -1,17 +1,16 @@
-// middleware.js
-import { NextResponse } from 'next/server';
+// middleware.ts (ou middleware.js se você não estiver usando TypeScript)
+import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/lib/firebase';
-import { NextRequest } from 'next/server';
 
-export async function middleware(request) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Roteie apenas as páginas que precisam de autenticação
-  if (pathname.startsWith('/radio-browser')) {
-    const user = await new Promise((resolve) => {
-      auth.onAuthStateChanged((user) => resolve(user));
-    });
+  // Verifique se a página requer autenticação
+  if (pathname.startsWith('/radi')) {
+    // Obtenha o usuário autenticado
+    const user = auth.currentUser;
 
+    // Se não houver um usuário autenticado, redirecione para a página inicial
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
@@ -23,6 +22,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/radio-browser/:path*'], // Protege as rotas que precisam de autenticação
+  matcher: ['/radi/:path*'], // Protege as rotas que precisam de autenticação
 };
-
