@@ -23,6 +23,7 @@ interface FavoriteAreaOrganismProps {
 }
 
 const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = '' }) => {
+  // states
   const [data, setData] = useState<RadioStation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [editItemId, setEditItemId] = useState<string>('');
@@ -31,11 +32,16 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const [editLanguage, setEditLanguage] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filteredData, setFilteredData] = useState<RadioStation[]>([]);
+
+  // theme
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const textColor = theme.colors[colorMode].secondary;
   const { colors } = theme;
+
   const toast = useToast();
+  
+  // redux
   const dispatch = useDispatch();
   const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite } = useSelector((state: RootState) => ({
     currentAudioId: state.register.currentAudioId,
@@ -165,6 +171,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
               <Td>
                 <Flex align="center">
                   <MotionMolecule whileHover={{ scale: 1.2 }}>
+                    {/** Botão responsável por acionar as estãções a tocar múscia */}
                     <IconButton
                       aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
                       icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ? <FaStop color={theme.colors.red[500]} /> : <FaPlay color={theme.colors.green[300]} />}
@@ -215,27 +222,30 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                 </Flex>
               </Td>
               <Td>
-                <Flex justify="flex-end">
+              <Flex justify="flex-end" gap={1} wrap="nowrap"> {/** wrap="nowrap" // Garante que os itens não vão para a linha seguinte */}
                   {editItemId === item.changeuuid ? (
                     <Button onClick={() => setEditItemId('')}>Cancel</Button>
                   ) : (
                     <MotionMolecule whileHover={{ scale: 1.2 }}>
                       <IconButton
                         aria-label="Edit"
-                        icon={<EditIcon />}
+                        icon={<EditIcon color={textColor} />}
+                        mr={2}
                         onClick={() => handleEdit(item)}
-                        bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                        _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
-                      />
-                      <IconButton
-                        aria-label="Delete"
-                        icon={<DeleteIcon />}
-                        onClick={() => handleDelete(item.changeuuid)}
                         bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                         _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
                       />
                     </MotionMolecule>
                   )}
+                  <MotionMolecule whileHover={{ scale: 1.2 }}>
+                    <IconButton
+                      aria-label="Delete"
+                      icon={<DeleteIcon color={colors.red[400]} />}
+                      onClick={() => handleDelete(item.changeuuid)}
+                      bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
+                      _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
+                    />
+                  </MotionMolecule>
                 </Flex>
               </Td>
             </Tr>

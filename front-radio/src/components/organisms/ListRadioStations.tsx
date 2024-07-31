@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import useStations from '../../hooks/useStations';
 import { useDispatch } from 'react-redux';
@@ -19,6 +19,10 @@ const ListRadioStations: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
   const toast = useToast();
+
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
+  const listStationsBg = theme.colors[colorMode].fourth;
 
   useEffect(() => {
     const savedPage = localStorage.getItem('currentPage');
@@ -108,11 +112,11 @@ const ListRadioStations: React.FC = () => {
             <Button
               key={index}
               onClick={() => handleRadioClick(station)}
-              bg="gray.100"
+              bg={listStationsBg}
               color="black"
               borderRadius="md"
               boxShadow="md"
-              _hover={{ bg: "gray.200" }}
+              _hover={{ bg: "#858594" }}
               p={8}
               textAlign="left"
               w="full"

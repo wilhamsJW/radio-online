@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Flex, Box, useTheme, useColorMode } from '@chakra-ui/react';
 import FilterInput from '../molecules/FilterInputMolecule';
 import FavoriteAreaOrganism from './FavoriteAreaOrganism';

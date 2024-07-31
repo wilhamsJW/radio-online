@@ -47,9 +47,9 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const toast = useToast();
   const dispatch = useDispatch();
   const [newUrl, setNewUrl] = useState('')
-  const { isNewStationFavorite, isPlaying } = useSelector((state: RootState) => ({
+  const { isNewStationFavorite } = useSelector((state: RootState) => ({
     isNewStationFavorite: state.register.isNewStationFavorite,
-    isPlaying: state.register.isPlaying
+    //isPlaying: state.register.isPlaying
   }));
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       if (url) {
         dispatch(setIsNewUrlAudio(url)); // Atualiza a URL no Redux
         //setIsPlaying(prev => !prev); // Alterna o estado de reprodução
-        dispatch(setIsPlaying(true))
+        //dispatch(setIsPlaying(true))
       } else {
         console.error('URL is undefined');
       }
@@ -174,9 +174,6 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
               <Td>
                 <Flex align="center">
                   <MotionMolecule whileHover={{ scale: 1.2 }}>
-
-                    {/* {item.url && <AudioPlayer url={item.url} />} */}
-                    {/* <AudioPlayer url={item.url} /> */}
                     <IconButton
                       aria-label={isPlaying ? 'Stop' : 'Play'}
                       icon={isPlaying ? <FaStop color={theme.colors.red[500]} /> : <FaPlay color={theme.colors.green[300]} />}
