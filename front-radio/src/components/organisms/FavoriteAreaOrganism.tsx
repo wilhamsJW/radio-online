@@ -175,7 +175,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                       ml={6}
                       isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
                     />
-                    <AudioPlayer audioId={item.url} />
+                    <AudioPlayer />
                   </MotionMolecule>
 
                   <Flex direction="column" ml={4}>

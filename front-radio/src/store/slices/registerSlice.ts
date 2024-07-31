@@ -36,7 +36,7 @@ const registerSlice = createSlice({
     setIsNewStationFavorite(state, action: PayloadAction<boolean>) {
       state.isNewStationFavorite = action.payload;
     },
-    setAudioState(state, action: PayloadAction<{ changeuuid: string; url: string; isPlaying: boolean }>) {
+    setAudioState(state, action: PayloadAction<{ changeuuid: string; url: string; isPlaying?: boolean }>) {
       state.currentAudioId = action.payload.changeuuid;
       state.currentAudioUrl = action.payload.url;
       state.currentAudioIsPlaying = !state.currentAudioIsPlaying;
@@ -49,11 +49,6 @@ const registerSlice = createSlice({
         state.currentAudioIsPlaying = action.payload.isPlaying;
       }
     },
-    // setIsNewUrlAudio(state, action: PayloadAction<string>) {
-    //   if (state.currentAudioId) {
-    //     state.currentAudioUrl = action.payload;
-    //   }
-    // },
     setIsNewUrlAudio(state, action: PayloadAction<string>) {
       state.currentAudioUrl = action.payload;
     },

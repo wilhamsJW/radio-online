@@ -1,89 +1,71 @@
-import { useEffect, useState } from 'react';
-import { Box } from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
+import { setAudioState } from '../../store/slices/registerSlice';
 
 interface AudioPlayerProps {
   audioId: string | undefined;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioId }) => {
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+const AudioPlayer = () => {
   const dispatch = useDispatch();
   const { currentAudioIsPlaying, currentAudioUrl } = useSelector((state: RootState) => ({
     currentAudioIsPlaying: state.register.currentAudioIsPlaying,
     currentAudioUrl: state.register.currentAudioUrl,
   }));
 
-  //console.log('audioId', audioId);
-  // console.log('isPlaying', isPlaying);
-  // console.log('audio', audio);
-  // console.log('audio', audio);
-  console.log('currentAudioIsPlaying', currentAudioIsPlaying);
-  
+  const audioRef = useRef<HTMLAudioElement | null>(null); // useRef é usado para armazenar a instância do HTMLAudioElement e evitar a criação de novas instâncias em cada renderização.
 
   useEffect(() => {
-    console.log('entrouuuuuuuuuuuuuuuuuu', currentAudioIsPlaying);
-    
+    // Se houver URL e áudio estiver tocando
     if (currentAudioUrl && currentAudioIsPlaying) {
-      console.log('entrou no if do useeffect', currentAudioUrl);
-      
-      const newAudio = new Audio(currentAudioUrl); // Passa a URL diretamente para o construtor
-      newAudio.play().catch(error => {
-        console.error('Error playing audio:', error);
-      });
-      setAudio(newAudio);
-    }
-    if (!currentAudioIsPlaying) {
-      if (audio) {
-        console.log('stopppppppppppppppppppppppppppppppppppppppp');
-        const newAudio = new Audio('currentAudioUrl'); // Passa a URL diretamente para o construtor
-        newAudio.play().catch(error => {
-          console.error('Error playing audio:', error);
+      if (audioRef.current) {
+        // Atualizar o src do áudio
+        audioRef.current.src = currentAudioUrl;
+        audioRef.current.play().catch(info => {
+          console.info('Áudio pausado:', info);
         });
-        setAudio(newAudio);
-        
-        audio.pause();
-        //audio.currentTime = 0; // Opcional: Volta ao início do áudio
+      } else {
+        // Criar uma nova instância de áudio e definir o src
+        audioRef.current = new Audio(currentAudioUrl);
+        audioRef.current.play().catch(info => {
+          console.info('Áudio pausado:', info);
+        });
       }
+    } else if (!currentAudioIsPlaying && audioRef.current) {
+      // Se áudio não estiver tocando, pausar e limpar
+      audioRef.current.pause();
+      audioRef.current.src = '';
+      audioRef.current = null;
+      dispatch(setAudioState({ changeuuid: '', url: currentAudioUrl || '', isPlaying: !currentAudioIsPlaying }));
     }
-  }, [currentAudioIsPlaying]);
 
-  
-  
+    // Cleanup function para pausar áudio quando o componente desmonta mais sobre essa técnica abaixo e garantir a limpeza devida para que não haja imprevisto em usuário escolher outras rádios para escutar
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
+    };
+  }, [currentAudioUrl, currentAudioIsPlaying, dispatch]);
 
-  // useEffect(() => {
-  //   if (audio) {
-  //       audio.play();
-  //     } 
-
-  //     // return () => {
-  //     //   audio.pause();
-  //     //   audio.src = '';
-  //     // };
-  // }, [audio]);
-
-    // useEffect(() => {
-  //   if (audio) {
-  //     if (isPlaying) {
-  //       audio.play();
-  //     } else {
-  //       audio.pause();
-  //     }
-
-  //     return () => {
-  //       audio.pause();
-  //       audio.src = '';
-  //     };
-  //   }
-  // }, [audio, isPlaying]);
-
-  return (
-    
-      <audio src={currentAudioUrl || ''} autoPlay />
-    
-  );
+  return null;
 };
 
 export default AudioPlayer;
+
+//  Cleanup é executada em situações específicas:
+
+// Quando a Função de Limpeza é Executada:
+// Antes da Reexecução do Efeito:
+
+// Quando o efeito é reexecutado devido a mudanças nas dependências, 
+// a função de limpeza do efeito anterior é chamada antes que o novo efeito seja aplicado. 
+// Isso é importante para evitar que múltiplos efeitos antigos acumulem e causem problemas.
+// Quando o Componente é Desmontado:
+
+// Quando o componente é desmontado, a função de limpeza é chamada. 
+// Isso garante que quaisquer efeitos colaterais criados pelo componente 
+// (como timers, assinaturas de eventos, ou instâncias de áudio) sejam limpos e não causem vazamentos de 
+// memória ou comportamentos indesejados.
