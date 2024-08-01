@@ -36,12 +36,7 @@ const MenuComponent: React.FC = () => {
           {colorMode === 'light' ? <MoonIcon color={iconColor} /> : <SunIcon color={iconColor} />}
           <span style={{ marginLeft: '8px' }}>{colorMode === 'light' ? 'Light' : 'Dark'}</span>
         </MenuItem>
-        <MenuItem display={{ base: 'block', md: 'none' }}  width="100%" onClick={onOpen} color={iconColor}>
-          <StarIcon color={iconColor} />
-          <span style={{ marginLeft: '8px' }}></span>
-          Favoritos
-        </MenuItem>
-        <MenuItem color={iconColor}>
+        <MenuItem color={iconColor}  onClick={onOpen} >
           <FaRadio color={iconColor} />
           <span style={{ marginLeft: '8px' }}></span>
           Rádio

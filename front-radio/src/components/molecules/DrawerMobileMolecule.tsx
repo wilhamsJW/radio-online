@@ -1,7 +1,8 @@
 import React from 'react';
-import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, Flex } from '@chakra-ui/react';
+import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, Flex, Text, Box } from '@chakra-ui/react';
 import ListRadioStations from '../organisms/ListRadioStations'
 import { MdFavorite } from "react-icons/md";
+import { GiPocketRadio } from "react-icons/gi";
 
 interface SideBarRadioMoleculeProps {
   isOpen: boolean;
@@ -17,8 +18,15 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
           <DrawerHeader >
             Adicionar
           </DrawerHeader>
-          <MdFavorite size={24} />
+          <MdFavorite size={24} style={{ marginRight: '0.5rem', marginLeft: '-0.9rem' }} />
+          <GiPocketRadio size={24} />
         </Flex>
+        <Flex align="center" p={4}>
+          <Text fontSize="sm" letterSpacing='0.1rem'>
+            Selecione uma rádio e comece a ouvir na sua lista de favoritos
+          </Text>
+        </Flex>
+
         <Divider />
         <DrawerBody>
           <ListRadioStations />
