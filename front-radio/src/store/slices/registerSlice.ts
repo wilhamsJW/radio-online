@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { User } from 'firebase/auth';
 
 interface RegisterState {
   isRegistering: boolean;
@@ -8,6 +9,7 @@ interface RegisterState {
   currentAudioUrl: string | null;
   currentAudioIsPlaying: boolean; 
   currentAudioId: string | null;
+  loggedUser: User | null
 }
 
 const initialState: RegisterState = {
@@ -17,7 +19,8 @@ const initialState: RegisterState = {
   isNewStationFavorite: false,
   currentAudioIsPlaying: false,
   currentAudioId: '',
-  currentAudioUrl: ''
+  currentAudioUrl: '',
+  loggedUser: null
 };
 
 const registerSlice = createSlice({
@@ -52,9 +55,12 @@ const registerSlice = createSlice({
     setIsNewUrlAudio(state, action: PayloadAction<string>) {
       state.currentAudioUrl = action.payload;
     },
+    setLoggedUser(state, action: PayloadAction<User | null>) {
+      state.loggedUser = action.payload;
+    },
   },
 });
 
-export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite, setAudioState, setCurrentAudioId, setIsPlaying, setIsNewUrlAudio } = registerSlice.actions;
+export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite, setAudioState, setCurrentAudioId, setIsPlaying, setIsNewUrlAudio, setLoggedUser } = registerSlice.actions;
 export default registerSlice.reducer;
 

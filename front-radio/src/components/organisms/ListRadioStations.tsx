@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import useStations from '../../hooks/useStations';
-import { useDispatch } from 'react-redux';
-import { setIsNewStationFavorite } from '../../store/slices/registerSlice'
-import { auth } from '../../lib/firebase'; // Certifique-se de que o caminho está correto
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { setIsNewStationFavorite, setLoggedUser } from '../../store/slices/registerSlice'
+import { auth } from '../../lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 interface RadioStation {
   name: string;
@@ -27,16 +29,20 @@ const ListRadioStations: React.FC = () => {
   const { colorMode } = useColorMode();
   const listStationsBg = theme.colors[colorMode].fourth;
 
-  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  const { loggedUser } = useSelector((state: RootState) => ({
+    loggedUser: state.register.loggedUser
+  }));
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      //setUser(user);
+      dispatch(setLoggedUser(user))
     });
-
     // Limpeza do listener quando o componente desmonta
-    return () => unsubscribe();
-  }, []);
+    //return () => unsubscribe();
+  }, [dispatch]);
 
   useEffect(() => {
     const savedPage = localStorage.getItem('currentPage');
@@ -77,15 +83,48 @@ const ListRadioStations: React.FC = () => {
     }
   };
 
+  const filterByEmail = (allSelectedRadioStations: any[], userId: string | null | undefined): any[] => {
+    return allSelectedRadioStations.filter(item => item.userId === userId);
+  };
+
   const handleRadioClick = (newStationFavorite: RadioStation) => {
-    // Aqui inicia a seleção de rádio
+    const userId = loggedUser?.email;
+    if (!userId) {
+      console.error("Usuário não está logado.");
+      toast({
+        title: "É preciso estar logado para adicionar uma rádio.",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const newStationFavoriteWithUser = {
       ...newStationFavorite,
-      userId: user?.email
+      userId
     };
+
+    // Obtém as estações de rádio armazenadas no localStorage
     const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
-    if (!allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavoriteWithUser.name)) {
+
+    // Filtra as estações de rádio do usuário atual
+    const userStations = filterByEmail(allSelectedRadioStations, userId);
+
+    // Verifica se a nova estação já está adicionada pelo usuário atual
+    const isStationAlreadyAddedByUser = userStations.some((s: RadioStation) => s.name === newStationFavoriteWithUser.name);
+
+    // Verifica se a estação já está adicionada por qualquer usuário
+    const isStationAlreadyAddedByAnyUser = allSelectedRadioStations.some((s: RadioStation) => s.name === newStationFavoriteWithUser.name);
+
+    if (!isStationAlreadyAddedByUser) {
+      // Adiciona a nova estação se ela ainda não estiver na lista do usuário
       allSelectedRadioStations.push(newStationFavoriteWithUser);
+
+      // Atualiza o localStorage com a nova lista
+      localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
+
       toast({
         title: "Estação de rádio adicionada com sucesso.",
         description: "",
@@ -102,12 +141,16 @@ const ListRadioStations: React.FC = () => {
         isClosable: true,
       });
     }
-    localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
-    dispatch(setIsNewStationFavorite(true))
+
+    dispatch(setIsNewStationFavorite(true));
   };
 
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
+
+  const handleClick = () => {
+    router.push('/'); // Redireciona para a página inicial
   };
 
   return (
@@ -117,6 +160,22 @@ const ListRadioStations: React.FC = () => {
       overflowY="auto"
       p={4}
     >
+      {!loggedUser && <Button
+        onClick={() => handleClick()}
+        bg={listStationsBg}
+        color="black"
+        borderRadius="md"
+        boxShadow="md"
+        _hover={{ bg: "#858594" }}
+        p={8}
+        textAlign="left"
+        w="full"
+        alignSelf="center"
+        fontSize="md"
+        mb='1rem'
+      >
+        Cadastrar-se
+      </Button>}
       {/* Campo de busca */}
       <Input
         placeholder="Pesquise estação de rádios"

@@ -26,9 +26,6 @@ export const fetchStationsApi = async (page: number, limit: number = 30): Promis
     }
 
     const data = await response.json();
-    console.log('data', data);
-    
-
     return data
   } catch (error) {
     console.error('Erro ao buscar estações:', error);

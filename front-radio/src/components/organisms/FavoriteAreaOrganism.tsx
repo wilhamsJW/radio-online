@@ -16,6 +16,7 @@ interface RadioStation {
   isPlaying: boolean;
   changeuuid: string;
   url?: string;
+  userId?: string
 }
 
 interface FavoriteAreaOrganismProps {
@@ -40,41 +41,71 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const { colors } = theme;
 
   const toast = useToast();
-  
+
   // redux
   const dispatch = useDispatch();
-  const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite } = useSelector((state: RootState) => ({
+  const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite, loggedUser } = useSelector((state: RootState) => ({
     currentAudioId: state.register.currentAudioId,
     currentAudioUrl: state.register.currentAudioUrl,
     currentAudioIsPlaying: state.register.currentAudioIsPlaying,
-    isNewStationFavorite: state.register.isNewStationFavorite
+    isNewStationFavorite: state.register.isNewStationFavorite,
+    loggedUser: state.register.loggedUser
   }));
 
-  useEffect(() => {
-    const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
-    setData(allSelectedRadioStations);
-  }, []);
+  const filterByEmail = (allSelectedRadioStations: any[], userId: string | null): any[] => {
+    return allSelectedRadioStations.filter(item => item.userId === userId);
+  };
 
   useEffect(() => {
+    if (loggedUser) {
+      const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+      const userByAllSelectedStatios = filterByEmail(allSelectedRadioStations, loggedUser.email)
+      setData(userByAllSelectedStatios);
+    }
+  }, [loggedUser]);
+
+  useEffect(() => {
+    const userId = loggedUser?.email;
+    if (!userId) {
+      console.error("Usuário não está logado.");
+      toast({
+        title: "É preciso estar logado para adicionar uma rádio.",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     if (isNewStationFavorite) {
       const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
-      setData(allSelectedRadioStations);
+      const userByAllSelectedStatios = filterByEmail(allSelectedRadioStations, userId)
+      setData(userByAllSelectedStatios);
       dispatch(setIsNewStationFavorite(false));
     }
   }, [isNewStationFavorite, dispatch]);
 
   useEffect(() => {
     if (data.length > 0) {
-      const newFilteredData = data.filter(
-        item =>
-          item.name.toLowerCase().includes(filter.toLowerCase()) ||
-          item.country.toLowerCase().includes(filter.toLowerCase()) ||
-          item.language.toLowerCase().includes(filter.toLowerCase())
-      );
+      const newFilteredData = data?.filter(item => {
+        // Verifique se o item e suas propriedades existem - Começou a gerar erros e fiz isso para validar
+        const itemName = item?.name?.toLowerCase() || '';
+        const itemCountry = item?.country?.toLowerCase() || '';
+        const itemLanguage = item?.language?.toLowerCase() || '';
+        const filterText = filter?.toLowerCase() || '';
+
+        return (
+          itemName.includes(filterText) ||
+          itemCountry.includes(filterText) ||
+          itemLanguage.includes(filterText)
+        );
+      });
+
       setFilteredData(newFilteredData);
       setCurrentPage(1);
     }
   }, [data, filter]);
+
 
   useEffect(() => {
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -89,9 +120,9 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   const handlePlayStop = (changeuuid: string, url: string | undefined) => {
     if (currentAudioId && currentAudioId !== changeuuid) {
-      dispatch(setAudioState({ changeuuid: currentAudioId, url: currentAudioUrl || '', isPlaying: !currentAudioIsPlaying  }));
+      dispatch(setAudioState({ changeuuid: currentAudioId, url: currentAudioUrl || '', isPlaying: !currentAudioIsPlaying }));
     }
-  
+
     if (currentAudioId === changeuuid && currentAudioIsPlaying) {
       dispatch(setAudioState({ changeuuid, url: currentAudioUrl || '', isPlaying: false }));
     } else {
@@ -99,7 +130,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       dispatch(setIsNewUrlAudio(url || ''));
     }
   };
-  
+
 
   const handleEdit = (item: RadioStation) => {
     setEditItemId(item.changeuuid);
@@ -109,36 +140,75 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   };
 
   const handleSave = () => {
-    const updatedData = data.map(item =>
-      item.changeuuid === editItemId
-        ? { ...item, name: editName, country: editCountry, language: editLanguage }
-        : item
-    );
-    setData(updatedData);
-    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedData));
-    toast({
-      title: "Dados salvos",
-      description: "As alterações foram salvas com sucesso.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    setEditItemId('');
+    if (loggedUser) {
+      // Obtém todas as estações de rádio do localStorage
+      const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+      
+      // Filtra as estações de rádio do usuário logado
+      const userStations = allSelectedRadioStations.filter((item: any) => item.userId === loggedUser.email);
+      
+      // Atualiza os dados da estação que está sendo editada
+      const updatedUserStations = userStations.map((item: any) =>
+        item.changeuuid === editItemId
+          ? { ...item, name: editName, country: editCountry, language: editLanguage }
+          : item
+      );
+      
+      // Atualiza o array completo de estações de rádio, mantendo os dados de outros usuários
+      const updatedAllStations = allSelectedRadioStations.filter((item: any) => item.userId !== loggedUser.email)
+        .concat(updatedUserStations);
+      
+      // Atualiza o localStorage com as estações de rádio atualizadas
+      localStorage.setItem('selectedRadioStations', JSON.stringify(updatedAllStations));
+      
+      // Atualiza o estado com as estações de rádio atualizadas para o usuário logado
+      setData(updatedUserStations);
+  
+      // Exibe mensagem de sucesso
+      toast({
+        title: "Dados salvos",
+        description: "As alterações foram salvas com sucesso.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+  
+      // Limpa o ID do item que estava sendo editado
+      setEditItemId('');
+    }
   };
 
   const handleDelete = (id: string) => {
-    const updatedData = data.filter(item => item.changeuuid !== id);
-    setData(updatedData);
-    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedData));
-    toast({
-      title: "Rádio excluída",
-      description: "",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
+    if (loggedUser) {
+      // Obtém todas as estações de rádio do localStorage
+      const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+      
+      // Filtra apenas as estações de rádio do usuário logado
+      const userStations = allSelectedRadioStations.filter((item: any) => item.userId === loggedUser.email);
+      
+      // Remove a estação com o id fornecido apenas para o usuário logado
+      const updatedUserStations = userStations.filter((item: any) => item.changeuuid !== id);
+      
+      // Atualiza o array completo de estações de rádio, mantendo os dados de outros usuários
+      const updatedAllStations = allSelectedRadioStations.filter((item: any) => item.userId !== loggedUser.email)
+        .concat(updatedUserStations);
+      
+      // Atualiza o localStorage com as estações de rádio atualizadas
+      localStorage.setItem('selectedRadioStations', JSON.stringify(updatedAllStations));
+      
+      // Atualiza o estado com as estações de rádio atualizadas para o usuário logado
+      setData(updatedUserStations);
+  
+      toast({
+        title: "Rádio excluída",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
-
+  
   const handleChange = (field: 'name' | 'country' | 'language', value: string) => {
     switch (field) {
       case 'name':
@@ -151,16 +221,31 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
         setEditLanguage(value);
         break;
     }
-
-    const updatedSelectedStations = data.map(d =>
-      d.changeuuid === editItemId
-        ? { ...d, name: field === 'name' ? value : d.name, country: field === 'country' ? value : d.country, language: field === 'language' ? value : d.language }
-        : d
-    );
-
-    localStorage.setItem('selectedRadioStations', JSON.stringify(updatedSelectedStations));
-    setData(updatedSelectedStations);
+  
+    if (loggedUser) {
+      // Filtra estações do usuário logado
+      const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
+      const userStations = allSelectedRadioStations.filter((item: any) => item.userId === loggedUser.email);
+  
+      // Atualiza as estações do usuário
+      const updatedUserStations = userStations.map((d: any) =>
+        d.changeuuid === editItemId
+          ? { ...d, name: field === 'name' ? value : d.name, country: field === 'country' ? value : d.country, language: field === 'language' ? value : d.language }
+          : d
+      );
+  
+      // Atualiza o array completo de estações de rádio, mantendo os dados de outros usuários
+      const updatedAllStations = allSelectedRadioStations.filter((item: any) => item.userId !== loggedUser.email)
+        .concat(updatedUserStations);
+  
+      // Atualiza o localStorage com o array atualizado
+      localStorage.setItem('selectedRadioStations', JSON.stringify(updatedAllStations));
+  
+      // Atualiza o estado com as estações de rádio atualizadas para o usuário logado
+      setData(updatedUserStations);
+    }
   };
+  
 
   return (
     <Box overflowY="auto" maxH="100%">
@@ -222,7 +307,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                 </Flex>
               </Td>
               <Td>
-              <Flex justify="flex-end" gap={1} wrap="nowrap"> {/** wrap="nowrap" // Garante que os itens não vão para a linha seguinte */}
+                <Flex justify="flex-end" gap={1} wrap="nowrap"> {/** wrap="nowrap" // Garante que os itens não vão para a linha seguinte */}
                   {editItemId === item.changeuuid ? (
                     <Button onClick={() => setEditItemId('')}>Cancel</Button>
                   ) : (
