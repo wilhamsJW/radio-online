@@ -93,7 +93,7 @@ export default function LoginBox() {
         setRememberMe={setRememberMe}
         handleSubmit={handleSubmit}
         loading={loading}
-        isRegistering={isRegistering}
+        isRegistering={isRegistering} 
       /> : <Spinner
         thickness='4px'
         speed='0.65s'
