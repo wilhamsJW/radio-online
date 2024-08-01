@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import InputFieldAtom from "../atoms/InputFieldAtom";
 import SubmitButton from "../atoms/SubmitButtonAtom";
@@ -11,7 +11,7 @@ import { AiOutlineUser } from 'react-icons/ai';
 import { signInWithEmailAndPassword } from '../../lib/firebase';
 import { useDispatch } from 'react-redux';
 import { setAuthenticatedUser } from '../../store/slices/registerSlice'
-import { getAuth, createUserWithEmailAndPassword, updateProfile  } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setNewAuthenticatedUser } from '../../store/slices/registerSlice';
 
 interface LoginFormProps {
@@ -48,6 +48,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const [showError, setShowError] = useState<boolean>(false);
   const dispatch = useDispatch();
   const auth = getAuth();
+  const toast = useToast();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,17 +56,16 @@ const LoginForm: React.FC<LoginFormProps> = ({
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       dispatch(setAuthenticatedUser(true));
-      console.log('userCredential no loginFormMolecule', userCredential);
-    } catch (error) {
-      console.error("Erro ao autenticar:", error);
-      setError('Erro desconhecido'); 
-      setShowError(true);
+    } catch (erro) {
+      console.log("Erro ao autenticar:", erro);
+      toast({
+        title: `Aviso: Ocorreu um erro ao tentar acessar`,
+        description: "Tente novamente.",
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      })
     }
-
-    // if (!success) {
-    //   setError(message || 'Erro desconhecido');
-    //   setShowError(true);
-    // }
   };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,9 +76,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('userCredential cadastro', userCredential);
       dispatch(setNewAuthenticatedUser(true))
-      console.log('name:', name);
-      
-
       if (userCredential.user) {
         // Atualiza o perfil do usuário com o nome
         await updateProfile(userCredential.user, {
@@ -86,10 +83,36 @@ const LoginForm: React.FC<LoginFormProps> = ({
         });
       }
 
-    } catch (error) {
-      console.log('error register', error);
-      //setError(error.message);
-      //setShowError(true);
+    } catch (error: unknown) {
+      // Verificar se error é um objeto e possui a propriedade message
+      if (error instanceof Error) {
+        const errorText = error.message || '';
+        // Usar expressão regular para extrair a mensagem de erro
+        const match = errorText.match(/Firebase: (.+?) \(/);
+        // evite usar let, deve ser revisado isso
+        let errorMessage = match ? match[1] : 'An error occurred during registration.';
+        if (errorMessage == 'Password should be at least 6 characters') {
+          errorMessage = 'Senha deve ter pelo menos 6 caracteres'
+        }
+        if (errorMessage == 'Error') {
+          errorMessage = 'E-mail já cadastrado ou outro erro durante o registro'
+        }
+        toast({
+          title: `Aviso: ${errorMessage}`,
+          description: "Tente novamente.",
+          status: "info",
+          duration: 3000,
+          isClosable: true,
+        })
+      } else {
+        toast({
+          title: "Um erro desconhecido ocorreu durante o registro.",
+          description: "Tente novamente.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -120,8 +143,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
         {isRegistering && <InputFieldAtom id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" color='#E9EDC9' leftIcon={<AiOutlineUser color="gray.300" />} />}
         <InputFieldAtom id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Seu email" color='#E9EDC9' leftIcon={<EmailIcon color="gray.300" />} />
         <InputFieldAtom id="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" color='#E9EDC9' leftIcon={<LockIcon color="gray.300" />} />
-        <RememberMeSwitch isChecked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} color='#E9EDC9'  />
-        <SubmitButton isLoading={loading} onClick={handleClick || (() => {})} buttonText={isRegistering ? "Inscrever-se" : "Entrar"} />
+        <RememberMeSwitch isChecked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} color='#E9EDC9' />
+        <SubmitButton isLoading={loading} onClick={handleClick || (() => { })} buttonText={isRegistering ? "Inscrever-se" : "Entrar"} />
       </Stack>
     </form>
   );

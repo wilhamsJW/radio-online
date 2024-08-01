@@ -28,7 +28,6 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
 
   const handleOpen = () => {
     console.log('Card clicked!');
-    // Adicione a lógica para o que deve acontecer quando o card for clicado
   };
 
   return (

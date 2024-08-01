@@ -258,9 +258,6 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
     }
   }, [filteredData])
 
-  console.log('filteredData', filteredData);
-  
-
   return (
     <Box overflowY="auto" maxH="100%" w="100%" p={{ base: 2, md: 4 }}>
       <Table overflowY="auto" maxH="22vh" variant="simple" w="100%">

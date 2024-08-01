@@ -223,7 +223,7 @@ const ListRadioStations: React.FC = () => {
             </Button>
           ))
         ) : (
-          <div>No stations available.</div>
+          <div>A busca pelas estações de rádio falhou, tente novamente!</div>
         )}
       </VStack>
 
