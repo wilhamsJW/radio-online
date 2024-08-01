@@ -15,7 +15,6 @@ import { metadata } from './metadata';
  */
 
 const inter = Inter({ subsets: ['latin'] });
-// const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,

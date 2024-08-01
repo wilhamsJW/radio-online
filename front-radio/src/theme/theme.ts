@@ -4,9 +4,9 @@ const colors = {
   light: {
     primary: '#ffffff', // Branco para o fundo claro
     secondary: '#000000', // Preto para o texto claro
-    accent: '#CCD5AE', // Cor de destaque para o modo claro
-    fourth: '#c2cca0', // Cor adicional para o modo claro
-    fifth: '#CCD5AE', // Nova cor adicionada para o modo claro
+    accent: '#eff1e4', // Cor de destaque para o modo claro
+    fourth: '#c5cab4', // Cor adicional para o modo claro
+    fifth: '#cfd3c4', // Nova cor adicionada para o modo claro
   },
   dark: {
     primary: '#2F2F33', // Cor escura para o fundo
@@ -31,7 +31,7 @@ const globalStyles: (props: { colorMode: 'light' | 'dark' }) => SystemStyleObjec
 // Configuração do tema
 const theme = extendTheme({
   config: {
-    initialColorMode: 'light', // Modo de cor inicial
+    initialColorMode: 'dark', // Modo de cor inicial
     useSystemColorMode: false,
   },
   colors,
