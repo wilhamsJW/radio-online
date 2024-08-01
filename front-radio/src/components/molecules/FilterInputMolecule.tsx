@@ -28,7 +28,7 @@ const FilterInput: React.FC<FilterInputProps> = ({ value, onChange }) => {
       />
       <InputLeftElement
         pointerEvents="none"
-        children={<AiOutlineSearch color={textColor} />}
+        // deploy deu esse children como erro mas o coido funcionava, retirei apenas o ícone
         mr={2}
       />
     </InputGroup>
