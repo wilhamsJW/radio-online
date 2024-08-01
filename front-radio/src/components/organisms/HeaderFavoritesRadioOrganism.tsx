@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { Flex, Box, useTheme, useColorMode } from '@chakra-ui/react';
+import { Flex, Box, useTheme, useColorMode, Text, useDisclosure } from '@chakra-ui/react';
 import FilterInput from '../molecules/FilterInputMolecule';
 import FavoriteAreaOrganism from './FavoriteAreaOrganism';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { FaRegListAlt } from 'react-icons/fa';
+import PulsingCardNoList from '../molecules/PulsingCardNoList'
 
 const HeaderFavoritesRadioOrganism: React.FC = () => {
   const [filter, setFilter] = useState('');
@@ -12,8 +16,19 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
   const favoritesStationBg = theme.colors[colorMode].fifth;
   const textColor = theme.colors[colorMode].secondary;
 
+  const { noListStationRadio } = useSelector((state: RootState) => ({
+    noListStationRadio: state.register.noListStationRadio
+  }));
+
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
+  };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleOpen = () => {
+    console.log('Card clicked!');
+    // Adicione a lógica para o que deve acontecer quando o card for clicado
   };
 
   return (
@@ -27,14 +42,18 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
       overflowY="auto" maxH="100%"
     >
       <Flex justify="space-between" align="center" mb={4}>
-        <Box color={textColor} fontWeight="bold">
-          Rádios Favoritas
-        </Box>
-        <FilterInput
-          value={filter}
-          onChange={handleFilterChange}
-        />
+        {!noListStationRadio && <Box color={textColor} fontWeight="bold">
+          Rádios favoritas
+          </Box>}
+        {!noListStationRadio && (
+          <FilterInput
+            value={filter}
+            onChange={handleFilterChange}
+          />
+        )}
       </Flex>
+      {noListStationRadio && <PulsingCardNoList onOpen={handleOpen}/>}
+
       <FavoriteAreaOrganism filter={filter} />
     </Flex>
   );

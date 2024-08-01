@@ -9,7 +9,8 @@ interface RegisterState {
   currentAudioUrl: string | null;
   currentAudioIsPlaying: boolean; 
   currentAudioId: string | null;
-  loggedUser: User | null
+  loggedUser: User | null;
+  noListStationRadio: boolean
 }
 
 const initialState: RegisterState = {
@@ -20,7 +21,8 @@ const initialState: RegisterState = {
   currentAudioIsPlaying: false,
   currentAudioId: '',
   currentAudioUrl: '',
-  loggedUser: null
+  loggedUser: null,
+  noListStationRadio: false
 };
 
 const registerSlice = createSlice({
@@ -58,9 +60,12 @@ const registerSlice = createSlice({
     setLoggedUser(state, action: PayloadAction<User | null>) {
       state.loggedUser = action.payload;
     },
+    setNoListStationRadio(state, action: PayloadAction<boolean>) {
+      state.noListStationRadio = action.payload;
+    },
   },
 });
 
-export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite, setAudioState, setCurrentAudioId, setIsPlaying, setIsNewUrlAudio, setLoggedUser } = registerSlice.actions;
+export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite, setAudioState, setCurrentAudioId, setIsPlaying, setIsNewUrlAudio, setLoggedUser, setNoListStationRadio } = registerSlice.actions;
 export default registerSlice.reducer;
 

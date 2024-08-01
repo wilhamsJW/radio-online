@@ -5,7 +5,7 @@ import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import MotionMolecule from '../../components/molecules/MotionMolecule';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setIsNewStationFavorite, setAudioState, setIsPlaying, setIsNewUrlAudio } from '../../store/slices/registerSlice';
+import { setIsNewStationFavorite, setAudioState, setNoListStationRadio, setIsNewUrlAudio } from '../../store/slices/registerSlice';
 import AudioPlayer from '../molecules/AudioPlayerMolecule';
 import truncateText from '../../utils/truncateText'
 
@@ -203,6 +203,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
       // Atualiza o estado com as estações de rádio atualizadas para o usuário logado
       setData(updatedUserStations);
+      setFilteredData(updatedUserStations)
 
       toast({
         title: "Rádio excluída",
@@ -250,6 +251,15 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       setData(updatedUserStations);
     }
   };
+
+  useEffect(() => {
+    if (!filteredData.length) {
+      dispatch(setNoListStationRadio(true))
+    }
+  }, [filteredData])
+
+  console.log('filteredData', filteredData);
+  
 
   return (
     <Box overflowY="auto" maxH="100%" w="100%" p={{ base: 2, md: 4 }}>

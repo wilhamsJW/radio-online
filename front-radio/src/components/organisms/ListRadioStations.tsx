@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode } from '@chakra-ui/react';
+import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode, Text } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import useStations from '../../hooks/useStations';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { setIsNewStationFavorite, setLoggedUser } from '../../store/slices/registerSlice'
+import { setIsNewStationFavorite, setLoggedUser, setNoListStationRadio } from '../../store/slices/registerSlice'
 import { auth } from '../../lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import truncateText from '@/utils/truncateText';
+import { MdFavorite } from "react-icons/md";
+import { GiPocketRadio } from "react-icons/gi";
 
 interface RadioStation {
   name: string;
@@ -125,6 +127,9 @@ const ListRadioStations: React.FC = () => {
       // Atualiza o localStorage com a nova lista
       localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
 
+      // Indica que a lista de estações não está vazia mais
+      dispatch(setNoListStationRadio(false))
+
       toast({
         title: "Estação de rádio adicionada com sucesso.",
         description: "",
@@ -173,6 +178,20 @@ const ListRadioStations: React.FC = () => {
         Cadastrar-se
       </Button>}
       {/* Campo de busca */}
+
+      <Flex align="center" direction="row" p={1}>
+          <Box mr={2}>
+            Adicionar
+          </Box>
+          <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
+          <GiPocketRadio size={24} />
+        </Flex>
+        <Flex align="center" p={4}>
+          <Text fontSize="xs" letterSpacing='0.1rem'>
+            Selecione uma rádio e comece a ouvir na sua lista de favoritos
+          </Text>
+        </Flex>
+
       <Input
         placeholder="Pesquise estação de rádios"
         value={searchTerm}
