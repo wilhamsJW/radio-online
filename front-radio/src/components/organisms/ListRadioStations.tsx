@@ -8,6 +8,7 @@ import { setIsNewStationFavorite, setLoggedUser } from '../../store/slices/regis
 import { auth } from '../../lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import truncateText from '@/utils/truncateText';
 
 interface RadioStation {
   name: string;
@@ -24,6 +25,9 @@ const ListRadioStations: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
   const toast = useToast();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const { data, error, isLoading } = useStations(currentPage);
 
   const theme = useTheme();
   const { colorMode } = useColorMode();
@@ -50,10 +54,6 @@ const ListRadioStations: React.FC = () => {
       setCurrentPage(parseInt(savedPage, 10))
     }
   }, [])
-
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const { data, error, isLoading } = useStations(currentPage);
 
   useEffect(() => {
     // Salva a página atual no localStorage sempre que mudar
@@ -145,12 +145,8 @@ const ListRadioStations: React.FC = () => {
     dispatch(setIsNewStationFavorite(true));
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-  };
-
   const handleClick = () => {
-    router.push('/'); // Redireciona para a página inicial
+    router.push('/');
   };
 
   return (
@@ -204,7 +200,7 @@ const ListRadioStations: React.FC = () => {
               textOverflow="ellipsis"
               whiteSpace="nowrap"
             >
-              {truncateText(station.name, 12)}
+              {truncateText(station.name, 15)}
             </Button>
           ))
         ) : (

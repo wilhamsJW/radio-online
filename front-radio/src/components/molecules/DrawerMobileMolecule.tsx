@@ -1,5 +1,7 @@
 import React from 'react';
-import { Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody } from '@chakra-ui/react';
+import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, Flex } from '@chakra-ui/react';
+import ListRadioStations from '../organisms/ListRadioStations'
+import { MdFavorite } from "react-icons/md";
 
 interface SideBarRadioMoleculeProps {
   isOpen: boolean;
@@ -11,9 +13,15 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
     <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerHeader borderBottomWidth='1px'>Favoritos</DrawerHeader>
+        <Flex align="center" direction="row" p={1}>
+          <DrawerHeader >
+            Adicionar
+          </DrawerHeader>
+          <MdFavorite size={24} />
+        </Flex>
+        <Divider />
         <DrawerBody>
-          <p>Sua rádio favorita...</p>
+          <ListRadioStations />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
