@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast } from "@chakra-ui/react";
+import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast, Spinner } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import InputFieldAtom from "../atoms/InputFieldAtom";
 import SubmitButton from "../atoms/SubmitButtonAtom";
@@ -9,10 +9,12 @@ import RememberMeSwitch from "./RememberMeSwitchMolecule";
 import { EmailIcon, LockIcon } from "@chakra-ui/icons";
 import { AiOutlineUser } from 'react-icons/ai';
 import { signInWithEmailAndPassword } from '../../lib/firebase';
-import { useDispatch } from 'react-redux';
-import { setAuthenticatedUser } from '../../store/slices/registerSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { setAuthenticatedUser, setIsLoading } from '../../store/slices/registerSlice'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setNewAuthenticatedUser } from '../../store/slices/registerSlice';
+
 
 interface LoginFormProps {
   name: string;
@@ -50,12 +52,18 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const auth = getAuth();
   const toast = useToast();
 
+  const { isLoading } = useSelector((state: RootState) => ({
+    isLoading: state.register.isLoading
+  }));
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    dispatch(setIsLoading(true))
     // ATUAL
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       dispatch(setAuthenticatedUser(true));
+      dispatch(setIsLoading(false))
     } catch (erro) {
       console.log("Erro ao autenticar:", erro);
       toast({
@@ -65,6 +73,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
         duration: 3000,
         isClosable: true,
       })
+    } finally {
+      dispatch(setIsLoading(false))
     }
   };
 
@@ -73,9 +83,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
     try {
       // Cria o usuário com o Firebase Auth
+      dispatch(setIsLoading(true))
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('userCredential cadastro', userCredential);
       dispatch(setNewAuthenticatedUser(true))
+      dispatch(setIsLoading(false))
       if (userCredential.user) {
         // Atualiza o perfil do usuário com o nome
         await updateProfile(userCredential.user, {
@@ -113,7 +125,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
           isClosable: true,
         });
       }
+    } finally {
+      dispatch(setIsLoading(true))
     }
+    {/** Pq uso o finally? Pq ele é executado após o bloco try e catch, independentemente de um erro ter ocorrido ou não. É ideal para código que deve sempre ser executado, como a limpeza de recursos ou, neste caso, a atualização do estado de carregamento. */ }
   };
 
   useEffect(() => {
@@ -124,29 +139,29 @@ const LoginForm: React.FC<LoginFormProps> = ({
   }, [showError]);
 
   return (
-    <form onSubmit={isRegistering ? handleRegister : handleLogin}>
-      <Stack spacing={4}>
-        {error && showError && (
-          <MotionAlert
-            status="error"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <AlertIcon />
-            <AlertTitle mr={2}>Erro!</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setShowError(false)} />
-          </MotionAlert>
-        )}
-        {isRegistering && <InputFieldAtom id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" color='#E9EDC9' leftIcon={<AiOutlineUser color="gray.300" />} />}
-        <InputFieldAtom id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Seu email" color='#E9EDC9' leftIcon={<EmailIcon color="gray.300" />} />
-        <InputFieldAtom id="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" color='#E9EDC9' leftIcon={<LockIcon color="gray.300" />} />
-        <RememberMeSwitch isChecked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} color='#E9EDC9' />
-        <SubmitButton isLoading={loading} onClick={handleClick || (() => { })} buttonText={isRegistering ? "Inscrever-se" : "Entrar"} />
-      </Stack>
-    </form>
+          <form onSubmit={isRegistering ? handleRegister : handleLogin}>
+            <Stack spacing={4}>
+              {error && showError && (
+                <MotionAlert
+                  status="error"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Erro!</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                  <CloseButton position="absolute" right="8px" top="8px" onClick={() => setShowError(false)} />
+                </MotionAlert>
+              )}
+              {isRegistering && <InputFieldAtom id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" color='#E9EDC9' leftIcon={<AiOutlineUser color="gray.300" />} />}
+              <InputFieldAtom id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Seu email" color='#E9EDC9' leftIcon={<EmailIcon color="gray.300" />} />
+              <InputFieldAtom id="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" color='#E9EDC9' leftIcon={<LockIcon color="gray.300" />} />
+              <RememberMeSwitch isChecked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} color='#E9EDC9' />
+              <SubmitButton isLoading={loading} onClick={handleClick || (() => { })} buttonText={isRegistering ? "Inscrever-se" : "Entrar"} />
+            </Stack>
+          </form>
   );
 };
 
