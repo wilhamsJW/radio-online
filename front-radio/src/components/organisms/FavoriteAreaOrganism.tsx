@@ -288,6 +288,8 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   useEffect(() => {
     if (!filteredData.length) {
       dispatch(setNoListStationRadio(true))
+    } else {
+      dispatch(setNoListStationRadio(false))
     }
   }, [filteredData])
 
