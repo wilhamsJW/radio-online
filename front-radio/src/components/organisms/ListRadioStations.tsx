@@ -179,7 +179,7 @@ const ListRadioStations: React.FC = () => {
       </Button>}
       {/* Campo de busca */}
 
-      <Flex align="center" direction="row" p={1}>
+      <Flex align="center" direction="row" p={1} display={{ base: 'none', md: 'block' }}>
           <Box mr={2}>
             Adicionar
           </Box>
@@ -187,7 +187,7 @@ const ListRadioStations: React.FC = () => {
           <GiPocketRadio size={24} />
         </Flex>
         <Flex align="center" p={4}>
-          <Text fontSize="xs" letterSpacing='0.1rem'>
+          <Text fontSize="xs" letterSpacing='0.1rem' display={{ base: 'none', md: 'block' }}>
             Selecione uma rádio e comece a ouvir na sua lista de favoritos
           </Text>
         </Flex>

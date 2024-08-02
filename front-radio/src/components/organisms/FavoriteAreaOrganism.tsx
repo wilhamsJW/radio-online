@@ -49,12 +49,13 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   // redux
   const dispatch = useDispatch();
-  const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite, loggedUser } = useSelector((state: RootState) => ({
+  const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite, loggedUser, noListStationRadio } = useSelector((state: RootState) => ({
     currentAudioId: state.register.currentAudioId,
     currentAudioUrl: state.register.currentAudioUrl,
     currentAudioIsPlaying: state.register.currentAudioIsPlaying,
     isNewStationFavorite: state.register.isNewStationFavorite,
-    loggedUser: state.register.loggedUser
+    loggedUser: state.register.loggedUser,
+    noListStationRadio: state.register.noListStationRadio
   }));
 
   const filterByEmail = (allSelectedRadioStations: any[], userId: string | null): any[] => {
@@ -74,7 +75,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
     if (!userId) {
       console.error("Usuário não está logado.");
       toast({
-        title: "É preciso estar logado para adicionar uma rádio.",
+        title: "Estamos em Contrução :)",
         description: "",
         status: "error",
         duration: 3000,
@@ -260,87 +261,125 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   return (
     <Box overflowY="auto" maxH="100%" w="100%" p={{ base: 2, md: 4 }}>
-      <Table overflowY="auto" maxH="22vh" variant="simple" w="100%">
+      <Table variant="simple" w="100%">
         <Tbody>
           {filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((item, index) => (
             <Tr key={index}>
               <Td>
-                <Flex align="center" direction="row" wrap="wrap">
-                  {/* <!-- Botão de Play/Stop e AudioPlayer --> */}
-                  <Flex align="center" mr={2}>
-                    <MotionMolecule whileHover={{ scale: 1.2 }}>
-                      <IconButton
-                        aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
-                        icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ? <FaStop color={colorMode === 'dark' ? 'red.500' : 'red.600'} /> : <FaPlay color={colorMode === 'dark' ? 'green.300' : 'green.500'} />}
-                        onClick={() => handlePlayStop(item.changeuuid, item.url || '')}
-                        bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                        _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
-                        isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
-                        size="md"
-                        ml="-1rem"
-                      />
-                    </MotionMolecule>
-                    <AudioPlayer />
-                  </Flex>
-
-                  {/* <!-- Textos --> */}
-                  <Flex direction="column" flex="1" mr={4}>
-                    <Text fontSize={fontSize} fontWeight="600" color='#000000' lineHeight="29.05px" textAlign="left">
-                      {truncateText(item.name, maxNameLength)}
-                    </Text>
-                    <Text fontSize="xs" fontWeight="400" color='#000000' lineHeight="19.36px" textAlign="left">
-                      {truncateText(item.country, maxNameLength)} - {item.language}
-                    </Text>
-                  </Flex>
-
-                  {/* <!-- Botões de Editar e Excluir --> */}
-                  <Flex direction="row" align="center" gap={2}>
-                    {editItemId === item.changeuuid ? (
-                      <Button onClick={() => setEditItemId('')} size="sm">Cancel</Button>
-                    ) : (
+                <Flex align="center" direction="row" wrap="wrap" gap={2}>
+                  {/* Botão de Play/Stop e AudioPlayer */}
+                  <Flex align="center" direction="row" mr={2} wrap="nowrap">
+                    {editItemId !== item.changeuuid && (
                       <MotionMolecule whileHover={{ scale: 1.2 }}>
                         <IconButton
-                          aria-label="Edit"
-                          icon={<EditIcon color={textColor} />}
-                          onClick={() => handleEdit(item)}
+                          aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
+                          icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ?
+                            <FaStop color={colorMode === 'dark' ? 'red.500' : 'red.600'} /> :
+                            <FaPlay color={colorMode === 'dark' ? 'green.300' : 'green.500'} />
+                          }
+                          onClick={() => handlePlayStop(item.changeuuid, item.url || '')}
                           bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                           _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
+                          isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
                           size="md"
                         />
                       </MotionMolecule>
                     )}
+                    <AudioPlayer />
+                  </Flex>
+
+                  {/* Textos e Inputs */}
+                  <Flex align="center" direction="row" flex="1" wrap="wrap">
+                    <Flex direction="column" flex="1" mr={4}>
+                      {editItemId === item.changeuuid ? (
+                        <>
+                          <Input
+                            value={editName}
+                            onChange={(e) => handleChange('name', e.target.value)}
+                            mb={2}
+                            placeholder="Name"
+                          />
+                          <Input
+                            value={editCountry}
+                            onChange={(e) => handleChange('country', e.target.value)}
+                            mb={2}
+                            placeholder="Country"
+                          />
+                          <Input
+                            value={editLanguage}
+                            onChange={(e) => handleChange('language', e.target.value)}
+                            mb={2}
+                            placeholder="Language"
+                          />
+                          <Button onClick={handleSave} mt={2} mb={2}>Salvar</Button>
+                          <Button onClick={() => setEditItemId('')}>
+                            Cancelar
+                          </Button>
+                        </>
+                      ) : (
+                        <Flex direction="column" flex="1">
+                          <Text fontSize={fontSize} fontWeight="600" color='#000000' lineHeight="29.05px" textAlign="left">
+                            {truncateText(item.name, maxNameLength)}
+                          </Text>
+                          <Text fontSize="xs" fontWeight="400" color='#000000' lineHeight="19.36px" textAlign="left">
+                            {truncateText(item.country, maxNameLength)} - {item.language}
+                          </Text>
+                        </Flex>
+                      )}
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Td>
+
+              <Td>
+                <Flex
+                  justify="flex-end"
+                  direction="row"
+                  wrap="nowrap"
+                  gap={2}
+                  overflow="visible" // Garante que o conteúdo não seja cortado e evita barra de rolagem
+                >
+                  {editItemId !== item.changeuuid && (
                     <MotionMolecule whileHover={{ scale: 1.2 }}>
                       <IconButton
-                        aria-label="Delete"
-                        icon={<DeleteIcon color={colors.red[400]} />}
-                        onClick={() => handleDelete(item.changeuuid)}
+                        aria-label="Edit"
+                        icon={<EditIcon color={textColor} />}
+                        onClick={() => handleEdit(item)}
                         bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                         _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
-                        size="md"
+                        size="sm"
                       />
                     </MotionMolecule>
-                  </Flex>
+                  )}
+                  <MotionMolecule whileHover={{ scale: 1.2 }}>
+                    <IconButton
+                      aria-label="Delete"
+                      icon={<DeleteIcon color={colors.red[400]} />}
+                      onClick={() => handleDelete(item.changeuuid)}
+                      bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
+                      _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
+                      size="sm"
+                    />
+                  </MotionMolecule>
                 </Flex>
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
-      <Flex justify="center" mt={4}>
-        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }).map((_, index) => (
-          <Button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            mx={1}
-            variant={index + 1 === currentPage ? 'solid' : 'outline'}
-            size="sm"
-          >
-            {index + 1}
-          </Button>
-        ))}
-      </Flex>
-    </Box>
 
+      {!noListStationRadio && <Flex mt={4} justify="space-between">
+        <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+          Previous
+        </Button>
+        <Text>
+          Page {currentPage} of {Math.ceil(filteredData.length / rowsPerPage)}
+        </Text>
+        <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredData.length / rowsPerPage)}>
+          Next
+        </Button>
+      </Flex>}
+    </Box>
   );
 };
 

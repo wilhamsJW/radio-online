@@ -43,7 +43,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
         cursor="pointer"
         onClick={onOpen}
       >
-        <Text fontSize="lg" mb={4} color="white">
+        <Text fontSize="lg" mb={4} color="white" display={{ base: 'none', md: 'block' }}>
           Selecione uma rádio e comece a ouvir agora mesmo
         </Text>
         <Button
