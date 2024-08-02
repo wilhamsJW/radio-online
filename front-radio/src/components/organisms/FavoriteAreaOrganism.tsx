@@ -44,7 +44,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   // BreakPoint
   const fontSize = useBreakpointValue({ base: 'sm', md: 'md' });
-  const maxNameLength = useBreakpointValue({ base: 9, md: 15 });
+  const maxNameLength = useBreakpointValue({ base: 15, md: 20 });  
 
   const toast = useToast();
 
@@ -286,11 +286,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   };
 
   useEffect(() => {
-    if (!filteredData.length) {
-      dispatch(setNoListStationRadio(true))
-    } else {
-      dispatch(setNoListStationRadio(false))
-    }
+    dispatch(setNoListStationRadio(filteredData.length === 0));
   }, [filteredData])
 
   return (
