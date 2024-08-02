@@ -64,15 +64,19 @@ const LoginForm: React.FC<LoginFormProps> = ({
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       dispatch(setAuthenticatedUser(true));
       dispatch(setIsLoading(false))
-    } catch (erro) {
-      console.log("Erro ao autenticar:", erro);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const errorString = error.toString()
+        const invalidCredential = (/\(auth\/invalid-credential\)/).test(errorString) ? 'E-mail ou senha inválidos' : 'Ops, credencias inválidas ou outro erro ao tentar fazer login';    
       toast({
-        title: `Aviso: Ocorreu um erro ao tentar acessar`,
+        title: `Aviso: ${invalidCredential}`,
         description: "Tente novamente.",
         status: "info",
-        duration: 3000,
+        duration: 4000,
         isClosable: true,
       })
+      }
+      
     } finally {
       dispatch(setIsLoading(false))
     }
@@ -85,7 +89,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
       // Cria o usuário com o Firebase Auth
       dispatch(setIsLoading(true))
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('userCredential cadastro', userCredential);
       dispatch(setNewAuthenticatedUser(true))
       dispatch(setIsLoading(false))
       if (userCredential.user) {
@@ -113,7 +116,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           title: `Aviso: ${errorMessage}`,
           description: "Tente novamente.",
           status: "info",
-          duration: 3000,
+          duration: 4000,
           isClosable: true,
         })
       } else {
@@ -121,12 +124,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
           title: "Um erro desconhecido ocorreu durante o registro.",
           description: "Tente novamente.",
           status: "error",
-          duration: 3000,
+          duration: 4000,
           isClosable: true,
         });
       }
     } finally {
-      dispatch(setIsLoading(true))
+      dispatch(setIsLoading(false))
     }
     {/** Pq uso o finally? Pq ele é executado após o bloco try e catch, independentemente de um erro ter ocorrido ou não. É ideal para código que deve sempre ser executado, como a limpeza de recursos ou, neste caso, a atualização do estado de carregamento. */ }
   };
