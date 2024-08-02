@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Table, Tbody, Tr, Td, Text, Button, Flex, useTheme, useColorMode, IconButton, useToast, Input, useBreakpointValue } from '@chakra-ui/react';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -8,6 +8,7 @@ import { RootState } from '@/store';
 import { setIsNewStationFavorite, setAudioState, setNoListStationRadio, setIsNewUrlAudio } from '../../store/slices/registerSlice';
 import AudioPlayer from '../molecules/AudioPlayerMolecule';
 import truncateText from '../../utils/truncateText'
+import { useAnimate, motion } from 'framer-motion';
 
 interface RadioStation {
   id: number;
@@ -47,6 +48,14 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   const toast = useToast();
 
+  const scopeRefButton = useRef<HTMLButtonElement>(null);
+  const [scope, animate] = useAnimate();
+
+  const variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   // redux
   const dispatch = useDispatch();
   const { currentAudioId, currentAudioUrl, currentAudioIsPlaying, isNewStationFavorite, loggedUser, noListStationRadio } = useSelector((state: RootState) => ({
@@ -61,6 +70,18 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   const filterByEmail = (allSelectedRadioStations: any[], userId: string | null): any[] => {
     return allSelectedRadioStations.filter(item => item.userId === userId);
   };
+
+  useEffect(() => {
+    if (scopeRefButton.current) {
+      // Define a animação pulsante
+      animate(scopeRefButton.current, { scale: [1, 2, 1] }, {
+        duration: 2.5,
+        repeat: Infinity,
+        repeatType: 'loop',
+        ease: 'easeInOut'
+      });
+    }
+  }, [animate]);
 
   useEffect(() => {
     if (loggedUser) {
@@ -195,6 +216,17 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       // Remove a estação com o id fornecido apenas para o usuário logado
       const updatedUserStations = userStations.filter((item: any) => item.changeuuid !== id);
 
+      // Pegando estação tocando musica
+      const currentStationPlaying = userStations.filter((item: any) => item.changeuuid == id);
+
+      // Verifica se a rádio a ser excluída é a que está tocando 
+      const stationMusicaPlaying = currentStationPlaying.filter((item: any) => item.changeuuid == id && currentAudioIsPlaying && item.url == currentAudioUrl);
+
+      // Seta setAudioState para que pare de tocar a múscia caso seja a rádio escolhida
+      if (stationMusicaPlaying.length) {
+        dispatch(setAudioState({ changeuuid: '', url: '', isPlaying: false }))
+      }
+
       // Atualiza o array completo de estações de rádio, mantendo os dados de outros usuários
       const updatedAllStations = allSelectedRadioStations.filter((item: any) => item.userId !== loggedUser.email)
         .concat(updatedUserStations);
@@ -270,20 +302,29 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                   {/* Botão de Play/Stop e AudioPlayer */}
                   <Flex align="center" direction="row" mr={2} wrap="nowrap">
                     {editItemId !== item.changeuuid && (
-                      <MotionMolecule whileHover={{ scale: 1.2 }}>
-                        <IconButton
-                          aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
-                          icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ?
-                            <FaStop color={colorMode === 'dark' ? 'red.500' : 'red.600'} /> :
-                            <FaPlay color={colorMode === 'dark' ? 'green.300' : 'green.500'} />
-                          }
-                          onClick={() => handlePlayStop(item.changeuuid, item.url || '')}
-                          bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                          _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
-                          isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
-                          size="md"
-                        />
-                      </MotionMolecule>
+                      <>
+                        <motion.div
+                          animate={{ scale: currentAudioId === item.changeuuid && currentAudioIsPlaying ? [1.3, 1.2, 1] : [] }}
+                          transition={{ duration: 1, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' }}
+                        >
+                          <MotionMolecule whileHover={{ scale: 1.2 }}>
+                            <IconButton
+                              ref={scopeRefButton}
+                              aria-label={currentAudioId === item.changeuuid && currentAudioIsPlaying ? 'Stop' : 'Play'}
+                              icon={currentAudioId === item.changeuuid && currentAudioIsPlaying ?
+                                <FaStop color={colorMode === 'dark' ? 'red.500' : 'red.600'} /> :
+                                <FaPlay color={colorMode === 'dark' ? 'green.300' : 'green.500'} />
+                              }
+                              onClick={() => handlePlayStop(item.changeuuid, item.url || '')}
+                              // bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
+                              bg={currentAudioId === item.changeuuid && currentAudioIsPlaying ? '#f56565' : colorMode === 'dark' ? 'gray.600' : 'gray.200'}
+                              _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
+                              isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
+                              size="md"
+                            />
+                          </MotionMolecule>
+                        </motion.div>
+                      </>
                     )}
                     <AudioPlayer />
                   </Flex>

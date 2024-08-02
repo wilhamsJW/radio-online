@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Flex, Box, useTheme, useColorMode, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, Box, useTheme, useColorMode, useDisclosure } from '@chakra-ui/react';
 import FilterInput from '../molecules/FilterInputMolecule';
 import FavoriteAreaOrganism from './FavoriteAreaOrganism';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { FaRegListAlt } from 'react-icons/fa';
 import PulsingCardNoList from '../molecules/PulsingCardNoList'
 
 const HeaderFavoritesRadioOrganism: React.FC = () => {
@@ -12,7 +11,6 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
 
-  const mainBg = theme.colors[colorMode].primary;
   const favoritesStationBg = theme.colors[colorMode].fifth;
   const textColor = theme.colors[colorMode].secondary;
 
