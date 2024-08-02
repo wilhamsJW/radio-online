@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useAnimate } from 'framer-motion';
 import { Flex, Box, Text, Button, useDisclosure } from '@chakra-ui/react';
 import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface PulsingCardProps {
   onOpen: () => void;
@@ -11,6 +13,10 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
   const [scope, animate] = useAnimate();
   const scopeRef = useRef<HTMLDivElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { noListStationRadio } = useSelector((state: RootState) => ({
+    noListStationRadio: state.register.noListStationRadio
+  }));
 
   useEffect(() => {
     if (scopeRef.current) {
@@ -43,10 +49,10 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
         cursor="pointer"
         onClick={onOpen}
       >
-        <Text fontSize="lg" mb={4} color="white" display={{ base: 'none', md: 'block' }}>
+        {noListStationRadio && <Text fontSize="lg" mb={4} color="white" display={{ base: 'none', md: 'block' }}>
           Selecione uma rádio e comece a ouvir agora mesmo
-        </Text>
-        <Button
+        </Text>}
+        {noListStationRadio && <Button
           mt={6}
           colorScheme="teal"
           variant="solid"
@@ -58,7 +64,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
           display={{ base: 'inline-flex', md: 'none' }}
         >
           Selecionar agora
-        </Button>
+        </Button>}
         <DrawerMobileMolecule isOpen={isOpen} onClose={onClose} />
       </Box>
     </Flex>

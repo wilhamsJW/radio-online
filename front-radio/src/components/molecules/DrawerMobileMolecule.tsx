@@ -3,6 +3,8 @@ import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody
 import ListRadioStations from '../organisms/ListRadioStations'
 import { MdFavorite } from "react-icons/md";
 import { GiPocketRadio } from "react-icons/gi";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface SideBarRadioMoleculeProps {
   isOpen: boolean;
@@ -10,10 +12,13 @@ interface SideBarRadioMoleculeProps {
 }
 
 const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onClose }) => {
+  const { noListStationRadio } = useSelector((state: RootState) => ({
+    noListStationRadio: state.register.noListStationRadio
+  }));
   return (
     <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
-      <DrawerContent>
+      {noListStationRadio && <DrawerContent>
         <Flex align="center" direction="row" p={1}>
           <DrawerHeader >
             Adicionar
@@ -31,7 +36,7 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
         <DrawerBody>
           <ListRadioStations />
         </DrawerBody>
-      </DrawerContent>
+      </DrawerContent>}
     </Drawer>
   );
 };
