@@ -14,10 +14,11 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
   const scopeRef = useRef<HTMLDivElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { noListStationRadio } = useSelector((state: RootState) => ({
-    noListStationRadio: state.register.noListStationRadio
+  const { noListStationRadio, mediaQuery } = useSelector((state: RootState) => ({
+    noListStationRadio: state.register.noListStationRadio,
+    mediaQuery: state.register.mediaQuery
   }));
-
+  
   useEffect(() => {
     if (scopeRef.current) {
       // Define a animação pulsante
@@ -46,10 +47,10 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
         maxWidth="600px"
         width="100%"
         mx="auto"
-        cursor="pointer"
-        onClick={onOpen}
+        cursor={mediaQuery.isDesktop ? "default" : "pointer"}
+        onClick={mediaQuery.isDesktop ? () => {} : onOpen}
       >
-        {noListStationRadio && <Text fontSize="lg" mb={4} color="white" display={{ base: 'none', md: 'block' }}>
+        {noListStationRadio && <Text fontSize="lg" mb={4} color="white" >
           Selecione uma rádio e comece a ouvir agora mesmo
         </Text>}
         {noListStationRadio && <Button
