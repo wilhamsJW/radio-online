@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Flex, Box, useTheme, useColorMode, useDisclosure } from '@chakra-ui/react';
 import FilterInput from '../molecules/FilterInputMolecule';
@@ -5,11 +7,22 @@ import FavoriteAreaOrganism from './FavoriteAreaOrganism';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import PulsingCardNoList from '../molecules/PulsingCardNoList'
+import { useMedia } from 'use-media';
+import { setMediaQuery } from '../../store/slices/registerSlice'
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 const HeaderFavoritesRadioOrganism: React.FC = () => {
   const [filter, setFilter] = useState('');
   const theme = useTheme();
   const { colorMode } = useColorMode();
+
+  const dispatch = useDispatch();
+
+  const isMobile = useMedia({ maxWidth: '767px' });
+  const isTablet = useMedia({ minWidth: '768px', maxWidth: '1024px' });
+  const isDesktop = useMedia({ minWidth: '920px' });
+  const isSmallScreen = useMedia({ maxWidth: '900px' })
 
   const favoritesStationBg = theme.colors[colorMode].fifth;
   const textColor = theme.colors[colorMode].secondary;
@@ -17,6 +30,15 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
   const { noListStationRadio } = useSelector((state: RootState) => ({
     noListStationRadio: state.register.noListStationRadio
   }));
+
+  useEffect(() => {
+    dispatch(setMediaQuery({
+      isMobile,
+      isTablet,
+      isDesktop,
+      isSmallScreen
+    }));
+  }, [isMobile, isTablet, isDesktop, isSmallScreen, dispatch])
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
@@ -27,7 +49,7 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
   const handleOpen = () => {
     console.log('Card clicked!');
   };
-
+  
   return (
     <Flex
       direction="column"
