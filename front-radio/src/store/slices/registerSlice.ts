@@ -1,17 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from 'firebase/auth';
 
+interface MediaQueryState {
+  isMobile: boolean;
+  isTablet: boolean;
+  isDesktop: boolean;
+  isSmallScreen: boolean
+}
+
 interface RegisterState {
   isRegistering: boolean;
   isAuthenticated: boolean;
   isNewAuthenticated: boolean;
   isNewStationFavorite: boolean;
   currentAudioUrl: string | null;
-  currentAudioIsPlaying: boolean; 
+  currentAudioIsPlaying: boolean;
   currentAudioId: string | null;
   loggedUser: User | null;
   noListStationRadio: boolean,
-  isLoading: boolean
+  isLoading: boolean,
+  mediaQuery: MediaQueryState;
 }
 
 const initialState: RegisterState = {
@@ -24,7 +32,13 @@ const initialState: RegisterState = {
   currentAudioUrl: '',
   loggedUser: null,
   noListStationRadio: false,
-  isLoading: false
+  isLoading: false,
+  mediaQuery: {
+    isMobile: false,
+    isTablet: false,
+    isDesktop: false,
+    isSmallScreen: false
+  }
 };
 
 const registerSlice = createSlice({
@@ -68,9 +82,25 @@ const registerSlice = createSlice({
     setIsLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
+    setMediaQuery(state, action: PayloadAction<MediaQueryState>) {
+      state.mediaQuery = action.payload;
+    }
   },
 });
 
-export const { setRegistering, setAuthenticatedUser, setNewAuthenticatedUser, setIsNewStationFavorite, setAudioState, setCurrentAudioId, setIsPlaying, setIsNewUrlAudio, setLoggedUser, setNoListStationRadio, setIsLoading } = registerSlice.actions;
-export default registerSlice.reducer;
+export const { 
+  setRegistering,
+  setAuthenticatedUser, 
+  setNewAuthenticatedUser, 
+  setIsNewStationFavorite, 
+  setAudioState, 
+  setCurrentAudioId, 
+  setIsPlaying, 
+  setIsNewUrlAudio, 
+  setLoggedUser, 
+  setNoListStationRadio, 
+  setIsLoading, 
+  setMediaQuery
+ } = registerSlice.actions;
 
+export default registerSlice.reducer;
