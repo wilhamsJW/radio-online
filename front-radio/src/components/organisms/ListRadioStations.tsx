@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode, Text } from '@chakra-ui/react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode, Text, Spinner } from '@chakra-ui/react';
 import useStations from '../../hooks/useStations';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -9,8 +8,7 @@ import { auth } from '../../lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import truncateText from '@/utils/truncateText';
-import { MdFavorite } from "react-icons/md";
-import { GiPocketRadio } from "react-icons/gi";
+import { SkipNext, SkipPrevious } from '../../../public/index'
 
 interface RadioStation {
   name: string;
@@ -62,7 +60,22 @@ const ListRadioStations: React.FC = () => {
     localStorage.setItem('currentPage', currentPage.toString());
   }, [currentPage]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <Flex
+      height="50vh" 
+      align="center"
+      justify="center"
+    >
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='blue.500'
+        size='xl'
+      />
+    </Flex>
+  )
+
   if (error) {
     const errorMessage = (error as Error)?.message || 'Error fetching stations';
     return <div>{errorMessage}</div>;
@@ -179,19 +192,6 @@ const ListRadioStations: React.FC = () => {
       </Button>}
       {/* Campo de busca */}
 
-      <Flex align="center" direction="row" p={1} display={{ base: 'none', md: 'block' }}>
-          <Box mr={2}>
-            Adicionar
-          </Box>
-          <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
-          <GiPocketRadio size={24} />
-        </Flex>
-        <Flex align="center" p={4}>
-          <Text fontSize="xs" letterSpacing='0.1rem' display={{ base: 'none', md: 'block' }}>
-            Selecione uma rádio e comece a ouvir na sua lista de favoritos
-          </Text>
-        </Flex>
-
       <Input
         placeholder="Pesquise estação de rádios"
         value={searchTerm}
@@ -236,14 +236,14 @@ const ListRadioStations: React.FC = () => {
             isDisabled={currentPage <= 1}
             aria-label="Página anterior"
           >
-            <Icon as={FaChevronLeft} />
+            <SkipPrevious color={colorMode} />
           </Button>
           <Button
             onClick={() => handlePageChange(currentPage + 1)}
             isDisabled={currentPage >= totalPages}
             aria-label="Próxima página"
           >
-            <Icon as={FaChevronRight} />
+            <SkipNext color={colorMode} />
           </Button>
         </HStack>
       </Flex>
