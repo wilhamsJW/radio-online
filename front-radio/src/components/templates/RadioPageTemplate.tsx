@@ -32,6 +32,7 @@ const RadioLayout: React.FC = () => {
         justifyContent={'center'}
       >
         <Flex
+        color={textColor}
           align="center"
           direction="row"
           p={1}
@@ -44,7 +45,7 @@ const RadioLayout: React.FC = () => {
             Adicionar
           </Box>
           <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
-          <GiPocketRadio style={{ color: 'white' }} size={24} />
+          <GiPocketRadio style={{ color: textColor }} size={24} />
           <Box mt={3} fontSize="xs">
             Selecione e comece a ouvir na sua lista de favoritos
           </Box>
@@ -85,7 +86,7 @@ const RadioLayout: React.FC = () => {
               pt='1rem'
             />
             <GiPocketRadio
-              style={{ color: 'white', marginLeft: '0.5rem' }}
+              style={{ color: textColor, marginLeft: '0.5rem' }}
               size={24}
             />
           </Flex>

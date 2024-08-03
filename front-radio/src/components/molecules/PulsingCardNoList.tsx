@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAnimate } from 'framer-motion';
-import { Flex, Box, Text, Button, useDisclosure } from '@chakra-ui/react';
+import { Flex, Box, Text, Button, useDisclosure,useTheme, useColorMode } from '@chakra-ui/react';
 import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -13,6 +13,9 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
   const [scope, animate] = useAnimate();
   const scopeRef = useRef<HTMLDivElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
+  const textColor = theme.colors[colorMode].secondary;
 
   const { noListStationRadio, mediaQuery } = useSelector((state: RootState) => ({
     noListStationRadio: state.register.noListStationRadio,
@@ -50,7 +53,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
         cursor={mediaQuery.isDesktop ? "default" : "pointer"}
         onClick={mediaQuery.isDesktop ? () => {} : onOpen}
       >
-        {noListStationRadio && <Text fontSize="lg" mb={4} color="white" >
+        {noListStationRadio && <Text fontSize="lg" mb={4} color={textColor} >
           Selecione uma rádio e comece a ouvir agora mesmo
         </Text>}
         {noListStationRadio && <Button
