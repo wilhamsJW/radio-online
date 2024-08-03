@@ -6,6 +6,8 @@ import { CiLogout } from 'react-icons/ci';
 import { auth } from '../../lib/firebase';
 import { useRouter } from 'next/navigation';
 import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store';
 
 const MenuComponent: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -23,6 +25,8 @@ const MenuComponent: React.FC = () => {
 
   const iconColor = colorMode === 'light' ? '#2F2F33' : '#ffffff';
 
+  const { mediaQuery } = useSelector((state: RootState) => ({mediaQuery: state.register.mediaQuery}))
+
   return (
     <Menu>
       <MenuButton
@@ -36,11 +40,11 @@ const MenuComponent: React.FC = () => {
           {colorMode === 'light' ? <MoonIcon color={iconColor} /> : <SunIcon color={iconColor} />}
           <span style={{ marginLeft: '8px' }}>{colorMode === 'light' ? 'Light' : 'Dark'}</span>
         </MenuItem>
-        <MenuItem color={iconColor}  onClick={onOpen} >
+        {mediaQuery.isDesktopDrawer && <MenuItem color={iconColor}  onClick={onOpen} >
           <FaRadio color={iconColor} />
           <span style={{ marginLeft: '8px' }}></span>
           Rádio
-        </MenuItem>
+        </MenuItem>}
         <MenuItem onClick={handleLogout} color={iconColor}>
           <CiLogout fontSize="1.2rem" color={iconColor} />
           <span style={{ marginLeft: '8px' }}></span>
