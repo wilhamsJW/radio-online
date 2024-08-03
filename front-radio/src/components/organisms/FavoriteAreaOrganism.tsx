@@ -9,6 +9,7 @@ import { setIsNewStationFavorite, setAudioState, setNoListStationRadio, setIsNew
 import AudioPlayer from '../molecules/AudioPlayerMolecule';
 import truncateText from '../../utils/truncateText'
 import { useAnimate, motion } from 'framer-motion';
+import { SkipNext, SkipPrevious } from '../../../public/index'
 
 interface RadioStation {
   id: number;
@@ -314,7 +315,6 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                                 <FaPlay color={colorMode === 'dark' ? 'green.300' : 'green.500'} />
                               }
                               onClick={() => handlePlayStop(item.changeuuid, item.url || '')}
-                              // bg={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                               bg={currentAudioId === item.changeuuid && currentAudioIsPlaying ? '#f56565' : colorMode === 'dark' ? 'gray.600' : 'gray.200'}
                               _hover={{ bg: colorMode === 'dark' ? 'gray.500' : 'gray.300' }}
                               isDisabled={currentAudioIsPlaying && currentAudioId !== item.changeuuid}
@@ -327,7 +327,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                     <AudioPlayer />
                   </Flex>
 
-                  {/* Textos e Inputs */}
+                  {/* Inputs de edição */}
                   <Flex align="center" direction="row" flex="1" wrap="wrap">
                     <Flex direction="column" flex="1" mr={4}>
                       {editItemId === item.changeuuid ? (
@@ -356,7 +356,9 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                           </Button>
                         </>
                       ) : (
-                        <Flex direction="column" flex="1">
+                        <>
+                          {/** Text do nome da rádio e páis  */}
+                          <Flex direction="column" flex='1'>
                           <Text fontSize={fontSize} fontWeight="600" color='#000000' lineHeight="29.05px" textAlign="left">
                             {truncateText(item.name, maxNameLength)}
                           </Text>
@@ -364,6 +366,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
                             {truncateText(item.country, maxNameLength)} - {item.language}
                           </Text>
                         </Flex>
+                        </>
                       )}
                     </Flex>
                   </Flex>
@@ -409,13 +412,13 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
       {!noListStationRadio && <Flex mt={4} justify="space-between">
         <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
+          <SkipPrevious />
         </Button>
         <Text>
           Page {currentPage} of {Math.ceil(filteredData.length / rowsPerPage)}
         </Text>
         <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredData.length / rowsPerPage)}>
-          Next
+        <SkipNext />
         </Button>
       </Flex>}
     </Box>
