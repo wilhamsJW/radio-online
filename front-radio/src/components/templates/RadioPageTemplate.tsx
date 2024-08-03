@@ -1,10 +1,12 @@
 'use client'
 
-import { Flex, Box, useTheme, useColorMode } from '@chakra-ui/react';
+import { Flex, Box, useTheme, useColorMode, Divider } from '@chakra-ui/react';
 import MenuComponent from '../organisms/Menu';
-import ListRadioStations  from '../organisms/ListRadioStations';
+import ListRadioStations from '../organisms/ListRadioStations';
 import CustomHeadingProps from '../atoms/HeadingAtom'
 import HeaderFavoritesRadioOrganism from '../organisms/HeaderFavoritesRadioOrganism'
+import { MdFavorite } from "react-icons/md";
+import { GiPocketRadio } from "react-icons/gi";
 
 const RadioLayout: React.FC = () => {
   const theme = useTheme();
@@ -26,20 +28,33 @@ const RadioLayout: React.FC = () => {
         overflowY="auto"
         overflow="hidden"
         position="relative"
+        alignItems={'center'}
+        justifyContent={'center'}
       >
-        <Box
-          position="absolute"
-          top={4}
-          right={4}
-          zIndex="modal"
+        <Flex
+          align="center"
+          direction="row"
+          p={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          wrap="wrap" // Adiciona wrap para garantir que o box inferior vá para a linha seguinte se necessário
         >
-          <MenuComponent />
-        </Box>
+          <Box mr={2}>
+            Adicionar
+          </Box>
+          <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
+          <GiPocketRadio style={{ color: 'white' }} size={24} />
+          <Box mt={3} fontSize="xs">
+            Selecione e comece a ouvir na sua lista de favoritos
+          </Box>
+        </Flex>
+        <Divider />
 
         {/** Área das rádios listadas */}
         <Box
-          position="absolute"
-          top={16}
+          position="relative"
+          top={0}
           left={4}
           zIndex="0"
           w="full"
@@ -52,27 +67,44 @@ const RadioLayout: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Menu Component visível em resoluções menores */}
-      <Box
-        display={{ base: 'block', md: 'none' }} // Mostrar apenas em resoluções menores
-        position="fixed"
-        top={4}
-        right={4}
-        zIndex="modal"
-      >
-        <MenuComponent />
-      </Box>
-
       {/** Área da lista de estações de rádio favorita */}
       <Box w={{ base: '100%', md: '80.9%' }} p={4} bg={mainBg}>
         <Flex direction="column" h="100%" bg={mainBg} color={textColor}>
-          <CustomHeadingProps text={'Rádio Browser'} color={textColor} textAlign='center' pt='1rem' />
+          <Flex
+            align="center"
+            direction="row"
+            p={1}
+            display="flex"
+            justifyContent="center" // Centraliza os itens horizontalmente
+            alignItems="center"    // Alinha os itens verticalmente no centro
+          >
+            <CustomHeadingProps
+              text={'Rádio Browser'}
+              color={textColor}
+              textAlign='center'
+              pt='1rem'
+            />
+            <GiPocketRadio
+              style={{ color: 'white', marginLeft: '0.5rem' }}
+              size={24}
+            />
+          </Flex>
+
           <Box
             position="relative"
             maxH="82vh"
             borderRadius={10}
             overflow={'hidden'}
-          >
+          >{/* Menu Component visível em resoluções menores */}
+            <Box
+
+              position="fixed"
+              top={4}
+              right={4}
+              zIndex="modal"
+            >
+              <MenuComponent />
+            </Box>
             <HeaderFavoritesRadioOrganism />
           </Box>
         </Flex>
