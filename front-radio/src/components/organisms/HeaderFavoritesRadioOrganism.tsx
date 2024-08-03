@@ -23,6 +23,7 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
   const isTablet = useMedia({ minWidth: '768px', maxWidth: '1024px' });
   const isDesktop = useMedia({ minWidth: '920px' });
   const isSmallScreen = useMedia({ maxWidth: '900px' })
+  const isDesktopDrawer = useMedia({ maxWidth: '767px' }); // Garantiu sincronia total para responsividade com drawer e lista para desktop, redux ajudou muito
 
   const favoritesStationBg = theme.colors[colorMode].fifth;
   const textColor = theme.colors[colorMode].secondary;
@@ -36,9 +37,10 @@ const HeaderFavoritesRadioOrganism: React.FC = () => {
       isMobile,
       isTablet,
       isDesktop,
-      isSmallScreen
+      isSmallScreen,
+      isDesktopDrawer
     }));
-  }, [isMobile, isTablet, isDesktop, isSmallScreen, dispatch])
+  }, [isMobile, isTablet, isDesktop, isSmallScreen, isDesktopDrawer, dispatch])
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
