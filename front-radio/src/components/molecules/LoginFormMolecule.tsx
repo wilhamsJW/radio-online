@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast, Spinner } from "@chakra-ui/react";
+import { Stack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import InputFieldAtom from "../atoms/InputFieldAtom";
 import SubmitButton from "../atoms/SubmitButtonAtom";
@@ -67,7 +67,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     } catch (error: unknown) {
       if (error instanceof Error) {
         const errorString = error.toString()
-        const invalidCredential = (/\(auth\/invalid-credential\)/).test(errorString) ? 'E-mail ou senha inválidos' : 'Ops, credencias inválidas ou outro erro ao tentar fazer login';    
+        const invalidCredential = (/\(auth\/invalid-credential\)/).test(errorString) ? 'E-mail ou senha inválidos' : 'Ops, credencias inválidas ou erro ao tentar fazer login';    
       toast({
         title: `Aviso: ${invalidCredential}`,
         description: "Tente novamente.",
@@ -110,11 +110,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
           errorMessage = 'Senha deve ter pelo menos 6 caracteres'
         }
         if (errorMessage == 'Error') {
-          errorMessage = 'E-mail já cadastrado ou outro erro durante o registro'
+          errorMessage = 'E-mail já cadastrado ou erro durante o registro'
         }
         toast({
           title: `Aviso: ${errorMessage}`,
-          description: "Tente novamente.",
+          description: "",
           status: "info",
           duration: 4000,
           isClosable: true,
