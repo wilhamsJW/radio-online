@@ -5,7 +5,8 @@ interface MediaQueryState {
   isMobile: boolean;
   isTablet: boolean;
   isDesktop: boolean;
-  isSmallScreen: boolean
+  isSmallScreen: boolean;
+  isDesktopDrawer: boolean
 }
 
 interface RegisterState {
@@ -19,7 +20,7 @@ interface RegisterState {
   loggedUser: User | null;
   noListStationRadio: boolean,
   isLoading: boolean,
-  mediaQuery: MediaQueryState;
+  mediaQuery: MediaQueryState
 }
 
 const initialState: RegisterState = {
@@ -37,7 +38,8 @@ const initialState: RegisterState = {
     isMobile: false,
     isTablet: false,
     isDesktop: false,
-    isSmallScreen: false
+    isSmallScreen: false,
+    isDesktopDrawer: false
   }
 };
 
