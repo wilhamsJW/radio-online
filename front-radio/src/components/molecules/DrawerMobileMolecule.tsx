@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, Flex, Text, Box } from '@chakra-ui/react';
+import { Divider, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, Flex, Text, useTheme, useColorMode, } from '@chakra-ui/react';
 import ListRadioStations from '../organisms/ListRadioStations'
 import { MdFavorite } from "react-icons/md";
 import { GiPocketRadio } from "react-icons/gi";
@@ -10,10 +10,14 @@ interface SideBarRadioMoleculeProps {
 }
 
 const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onClose }) => {
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
+  const textColor = theme.colors[colorMode].secondary;
+
   return (
     <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
-      {<DrawerContent>
+      <DrawerContent color={textColor}>
         <Flex align="center" direction="row" p={1}>
           <DrawerHeader >
             Adicionar
@@ -23,7 +27,7 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
         </Flex>
         <Flex align="center" p={4}>
           <Text fontSize="sm" letterSpacing='0.1rem'>
-            Selecione e comece a ouvir na sua lista de favoritos
+            Selecione e comece a ouvir na sua lista de favoritos 2
           </Text>
         </Flex>
 
@@ -31,7 +35,7 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
         <DrawerBody>
           <ListRadioStations />
         </DrawerBody>
-      </DrawerContent>}
+      </DrawerContent>
     </Drawer>
   );
 };
