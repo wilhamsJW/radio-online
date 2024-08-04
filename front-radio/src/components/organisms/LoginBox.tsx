@@ -83,43 +83,83 @@ export default function LoginBox() {
       </Heading>
       {!isRegistering && <SocialLoginButtons />}
       <Divider borderColor="gray.400" my={12} />
-      {!isLoading ? <LoginForm
-        name={name}
-        email={email}
-        password={password}
-        rememberMe={rememberMe}
-        setName={setName}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        setRememberMe={setRememberMe}
-        handleSubmit={handleSubmit}
-        loading={loading}
-        isRegistering={isRegistering} 
-      /> : <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />}
+      {!isLoading ? (
+        <LoginForm
+          name={name}
+          email={email}
+          password={password}
+          rememberMe={rememberMe}
+          setName={setName}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setRememberMe={setRememberMe}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          isRegistering={isRegistering}
+        />
+      ) : (
+        <Spinner
+          thickness='4px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='blue.500'
+          size='xl'
+        />
+      )}
       {!isRegistering && (
-        <HeadingAtom  onClick={onOpen} mt="4" text="Esqueceu sua senha?" size="xs" textAlign="center" color="teal.100" textDecoration="underline" cursor="pointer" />
+        <HeadingAtom
+          onClick={onOpen}
+          mt="4"
+          text="Esqueceu sua senha?"
+          size="xs"
+          textAlign="center"
+          color="teal.100"
+          textDecoration="underline"
+          cursor="pointer"
+        />
       )}
       {!isRegistering && <Divider borderColor="gray.400" />}
-      <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
-        <MotionMolecule>
-          <HeadingAtom
-            text={isRegistering ? "Voltar ao Login" : "Não tem uma conta? Inscrever-se"}
-            textAlign="center"
-            size="md"
-            color="#FFFFFF"
-            textDecoration="underline"
-            cursor="pointer"
-            onClick={handleRegisterClick}
-          />
-        </MotionMolecule>
-      </HeadingAtom>
+      {isRegistering ? (
+        <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
+          <MotionMolecule>
+            <Heading
+              as="span"
+              size="md"
+              color="#FFFFFF"
+              textDecoration="none"
+              cursor="pointer"
+              onClick={handleRegisterClick}
+            >
+              Voltar ao Login
+            </Heading>
+          </MotionMolecule>
+        </HeadingAtom>
+      ) : (
+        <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
+          <MotionMolecule>
+            <Heading
+              as="span"
+              size="md"
+              color="#FFFFFF"
+              textDecoration="none"
+            >
+              Não tem uma conta?{' '}
+            </Heading>
+            <Heading
+              as="span"
+              size="md"
+              color="#FFFFFF"
+              textDecoration="underline"
+              cursor="pointer"
+              onClick={handleRegisterClick}
+            >
+              Inscrever-se
+            </Heading>
+          </MotionMolecule>
+        </HeadingAtom>
+      )}
       <ModalMolecule isOpen={isOpen} onClose={onClose} />
     </>
+
   )
 }
