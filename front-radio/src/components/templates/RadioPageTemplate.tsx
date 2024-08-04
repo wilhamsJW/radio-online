@@ -7,6 +7,8 @@ import CustomHeadingProps from '../atoms/HeadingAtom'
 import HeaderFavoritesRadioOrganism from '../organisms/HeaderFavoritesRadioOrganism'
 import { MdFavorite } from "react-icons/md";
 import { GiPocketRadio } from "react-icons/gi";
+import AddMusicDropDrow from '../molecules/AddMusicDropDrow'
+import { PlaylistAdd } from '../../../public/index'
 
 const RadioLayout: React.FC = () => {
   const theme = useTheme();
@@ -32,7 +34,7 @@ const RadioLayout: React.FC = () => {
         justifyContent={'center'}
       >
         <Flex
-        color={textColor}
+          color={textColor}
           align="center"
           direction="row"
           p={1}
@@ -47,7 +49,7 @@ const RadioLayout: React.FC = () => {
           <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
           <GiPocketRadio style={{ color: textColor }} size={24} />
           <Box mt={3} fontSize="xs">
-            Selecione e comece a ouvir na sua lista de favoritos
+            Selecione e comece a ouvir na sua lista de favoritos 1
           </Box>
         </Flex>
         <Divider />
@@ -107,6 +109,15 @@ const RadioLayout: React.FC = () => {
               <MenuComponent />
             </Box>
             <HeaderFavoritesRadioOrganism />
+            {/* Componente suspenso no final da página */}
+            <Box
+              position="fixed"
+              bottom={2}
+              right={4} 
+              zIndex="overlay" // Garante que o componente fique acima de outros conteúdos
+            >
+              <AddMusicDropDrow icon={<PlaylistAdd color={textColor} />} color={textColor} />
+            </Box>
           </Box>
         </Flex>
       </Box> {/** Fim lista de estações */}
