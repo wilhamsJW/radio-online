@@ -243,7 +243,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
         title: "Rádio excluída",
         description: "",
         status: "error",
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
       });
     }
@@ -289,6 +289,9 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   useEffect(() => {
     dispatch(setNoListStationRadio(filteredData.length === 0));
   }, [filteredData])
+
+  console.log('currentPage::',currentPage);
+  
 
   return (
     <Box overflowY="auto" maxH="100%" w="100%" p={{ base: 2, md: 4 }}>
@@ -411,7 +414,8 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
       </Table>
 
       {!noListStationRadio && <Flex mt={4} justify="space-between">
-        <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+      {/** REVISAR */}
+        <Button onClick={currentPage < 2 ? () => {} : () => handlePageChange(currentPage - 1)} disabled={currentPage < 5 }>
           <SkipPrevious />
         </Button>
         <Text>
