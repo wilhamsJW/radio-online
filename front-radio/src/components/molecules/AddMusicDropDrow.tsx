@@ -2,19 +2,23 @@ import React from 'react';
 import { Menu, MenuButton, IconButton, useDisclosure } from '@chakra-ui/react';
 import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
 import { ReactElement  } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface AddMusicDropDrowProps {
     icon: ReactElement ; 
-    color: string
   }
 
-const AddMusicDropDrow: React.FC<AddMusicDropDrowProps> = ({ icon, color }) => {
+const AddMusicDropDrow: React.FC<AddMusicDropDrowProps> = ({ icon }) => {
+
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleLogout = async () => {
-  };
+  const { mediaQuery } = useSelector((state: RootState) => ({
+    mediaQuery: state.register.mediaQuery
+  }));
 
   return (
-    <Menu>
+    <>
+      {mediaQuery.isDesktopDrawer && <Menu>
       <MenuButton
         onClick={onOpen}
         as={IconButton}
@@ -23,7 +27,8 @@ const AddMusicDropDrow: React.FC<AddMusicDropDrowProps> = ({ icon, color }) => {
         variant='outline'
       />
       <DrawerMobileMolecule isOpen={isOpen} onClose={onClose} />
-    </Menu>
+    </Menu>}
+    </>
   );
 };
 

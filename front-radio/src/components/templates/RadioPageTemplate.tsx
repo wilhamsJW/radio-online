@@ -116,7 +116,7 @@ const RadioLayout: React.FC = () => {
               right={4} 
               zIndex="overlay" // Garante que o componente fique acima de outros conteúdos
             >
-              <AddMusicDropDrow icon={<PlaylistAdd color={textColor} />} color={textColor} />
+              <AddMusicDropDrow icon={<PlaylistAdd color={textColor} />} />
             </Box>
           </Box>
         </Flex>

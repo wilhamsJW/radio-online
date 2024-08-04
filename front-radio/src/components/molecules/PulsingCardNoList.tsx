@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAnimate } from 'framer-motion';
-import { Flex, Box, Text, Button, useDisclosure, useTheme, useColorMode } from '@chakra-ui/react';
-import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
+import { Flex, Box, Text, useDisclosure, useTheme, useColorMode } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
