@@ -32,6 +32,7 @@ const ListRadioStations: React.FC = () => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const listStationsBg = theme.colors[colorMode].fourth;
+  const textColor = theme.colors[colorMode].secondary;
 
   const router = useRouter();
 
@@ -220,7 +221,7 @@ const ListRadioStations: React.FC = () => {
             </Button>
           ))
         ) : (
-          <div>A busca pelas estações de rádio falhou, tente novamente!</div>
+          <Text color={textColor}>A busca pelas estações de rádio falhou, tente novamente!</Text>
         )}
       </VStack>
 
