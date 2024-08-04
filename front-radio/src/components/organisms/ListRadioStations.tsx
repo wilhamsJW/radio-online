@@ -41,11 +41,8 @@ const ListRadioStations: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      //setUser(user);
       dispatch(setLoggedUser(user))
     });
-    // Limpeza do listener quando o componente desmonta
-    //return () => unsubscribe();
   }, [dispatch]);
 
   useEffect(() => {
