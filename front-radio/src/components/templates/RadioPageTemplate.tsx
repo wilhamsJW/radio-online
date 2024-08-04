@@ -49,7 +49,7 @@ const RadioLayout: React.FC = () => {
           <MdFavorite size={24} style={{ marginRight: '0.5rem' }} />
           <GiPocketRadio style={{ color: textColor }} size={24} />
           <Box mt={3} fontSize="xs">
-            Selecione e comece a ouvir na sua lista de favoritos 1
+            Selecione e comece a ouvir na sua lista de favoritos
           </Box>
         </Flex>
         <Divider />

@@ -27,7 +27,7 @@ const DrawerMobileMolecule: React.FC<SideBarRadioMoleculeProps> = ({ isOpen, onC
         </Flex>
         <Flex align="center" p={4}>
           <Text fontSize="sm" letterSpacing='0.1rem'>
-            Selecione e comece a ouvir na sua lista de favoritos 2
+            Selecione e comece a ouvir na sua lista de favoritos
           </Text>
         </Flex>
 
