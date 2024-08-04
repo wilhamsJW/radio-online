@@ -167,7 +167,7 @@ const ListRadioStations: React.FC = () => {
   return (
     <Box
       position="relative"
-      maxH="90vh"
+      maxH="80vh"
       overflowY="auto"
       p={4}
     >
