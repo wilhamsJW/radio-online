@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAnimate } from 'framer-motion';
-import { Flex, Box, Text, Button, useDisclosure,useTheme, useColorMode } from '@chakra-ui/react';
+import { Flex, Box, Text, Button, useDisclosure, useTheme, useColorMode } from '@chakra-ui/react';
 import DrawerMobileMolecule from '../molecules/DrawerMobileMolecule';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -21,7 +21,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
     noListStationRadio: state.register.noListStationRadio,
     mediaQuery: state.register.mediaQuery
   }));
-  
+
   useEffect(() => {
     if (scopeRef.current) {
       // Define a animação pulsante
@@ -42,7 +42,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
     >
       <Box
         ref={scopeRef}
-        
+
         borderRadius="md"
         p={6}
 
@@ -51,25 +51,16 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
         width="100%"
         mx="auto"
         cursor={mediaQuery.isDesktop ? "default" : "pointer"}
-        onClick={mediaQuery.isDesktop ? () => {} : onOpen}
+        onClick={mediaQuery.isDesktop ? () => { } : onOpen}
       >
-        {noListStationRadio && <Text fontSize="lg" mb={4} color={textColor} >
-          Selecione uma rádio e comece a ouvir agora mesmo
-        </Text>}
-        {noListStationRadio && <Button
-          mt={6}
-          colorScheme="teal"
-          variant="solid"
-          size="lg"
-          _hover={{ bg: 'teal.600' }}
-          _active={{ bg: 'teal.700' }}
-          borderRadius={20}
-          onClick={onOpen}
-          display={{ base: 'inline-flex', md: 'none' }}
-        >
-          Selecionar agora
-        </Button>}
-        <DrawerMobileMolecule isOpen={isOpen} onClose={onClose} />
+        {noListStationRadio && <>
+          <Text fontSize="lg" mb={4} color={textColor} >
+            Selecione uma rádio e comece a ouvir agora mesmo
+          </Text>
+          <Text fontSize="xs" mb={4} color={textColor} >
+            (Clique no botão abaixo)
+          </Text>
+        </>}
       </Box>
     </Flex>
   );
