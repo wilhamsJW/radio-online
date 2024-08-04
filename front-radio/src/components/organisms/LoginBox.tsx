@@ -7,12 +7,12 @@ import { setRegistering } from '../../store/slices/registerSlice';
 import { useRouter } from 'next/navigation';
 import { setNewAuthenticatedUser, setAuthenticatedUser } from '../../store/slices/registerSlice';
 import { Action } from 'redux';
-import { Heading, Divider, Spinner } from '@chakra-ui/react';
+import { Heading, Divider, Spinner, useDisclosure } from '@chakra-ui/react';
 import SocialLoginButtons from '../molecules/SocialLoginButtonsMolecule'
 import HeadingAtom from '../atoms/HeadingAtom'
 import MotionMolecule from '../molecules/MotionMolecule'
 import LoginForm from '../molecules/LoginFormMolecule'
-
+import ModalMolecule from '../molecules/ModalMolecule'
 
 type AuthenticatedUserType = (payload: boolean) => Action;
 type NewAuthenticatedType = (payload: boolean) => Action;
@@ -21,6 +21,7 @@ export default function LoginBox() {
 
   const dispatch = useDispatch();
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { isAuthenticated, isRegistering, isNewAuthenticated, isLoading } = useSelector((state: RootState) => ({
     isAuthenticated: state.register.isAuthenticated,
@@ -102,7 +103,7 @@ export default function LoginBox() {
         size='xl'
       />}
       {!isRegistering && (
-        <HeadingAtom mt="4" text="Esqueceu sua senha?" size="xs" textAlign="center" color="teal.100" textDecoration="underline" cursor="pointer" />
+        <HeadingAtom  onClick={onOpen} mt="4" text="Esqueceu sua senha?" size="xs" textAlign="center" color="teal.100" textDecoration="underline" cursor="pointer" />
       )}
       {!isRegistering && <Divider borderColor="gray.400" />}
       <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
@@ -118,6 +119,7 @@ export default function LoginBox() {
           />
         </MotionMolecule>
       </HeadingAtom>
+      <ModalMolecule isOpen={isOpen} onClose={onClose} />
     </>
   )
 }
