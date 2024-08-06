@@ -12,7 +12,7 @@ interface StationsData {
   total: number;
 }
 
-export const fetchStationsApi = async (page: number, limit: number = 30): Promise<RadioStation[] | null> => {
+export const fetchStationsApi = async (page: number, limit: number = 80): Promise<RadioStation[] | null> => {
   try {
     const response = await fetch(`https://de1.api.radio-browser.info/json/stations/search?limit=${limit}&page=${page}`, {
       method: 'GET',
