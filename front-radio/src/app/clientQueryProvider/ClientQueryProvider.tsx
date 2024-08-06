@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 
 interface ClientQueryProviderProps {
   children: ReactNode;
-  dehydratedState?: DehydratedState;
+  dehydratedState?: any;
 }
 
 const ClientQueryProvider = ({ children, dehydratedState }: ClientQueryProviderProps) => {
