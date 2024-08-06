@@ -4,6 +4,7 @@ import ChakraProviderWrapper from './chakra-provider';
 import ClientProviderRedux from './reduxProvider/reduxProvider';
 import ClientQueryProvider from './clientQueryProvider/ClientQueryProvider'
 import { metadata } from './metadata';
+import { DehydratedState } from 'react-query';
 
 /**
  * O Next.js 14 ou versão recente não aceita o Provider do Redux diretamente envolvendo
@@ -16,11 +17,12 @@ import { metadata } from './metadata';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode; // Garante que `children` seja um `ReactNode`, que pode incluir elementos JSX, strings, etc.
-}) {
+interface LayoutProps {
+  children: React.ReactNode;
+  dehydratedState?: DehydratedState;
+}
+
+export default function RootLayout({children, dehydratedState }:LayoutProps) {
   return (
     <html lang="en">
       <head>
@@ -31,7 +33,7 @@ export default function RootLayout({
         <title>{typeof metadata.title === 'string' ? metadata.title : 'Default Title'}</title>
       </head>
       <body className={inter.className}>
-        <ClientQueryProvider>
+        <ClientQueryProvider dehydratedState={dehydratedState}>
           <ChakraProviderWrapper>
             <ClientProviderRedux>
               {children}
