@@ -19,10 +19,9 @@ const inter = Inter({ subsets: ['latin'] });
 
 interface LayoutProps {
   children: React.ReactNode;
-  dehydratedState?: DehydratedState;
 }
 
-export default function RootLayout({children, dehydratedState }:LayoutProps) {
+export default function RootLayout({children }:LayoutProps) {
   return (
     <html lang="en">
       <head>
@@ -33,7 +32,7 @@ export default function RootLayout({children, dehydratedState }:LayoutProps) {
         <title>{typeof metadata.title === 'string' ? metadata.title : 'Default Title'}</title>
       </head>
       <body className={inter.className}>
-        <ClientQueryProvider dehydratedState={dehydratedState}>
+        <ClientQueryProvider>
           <ChakraProviderWrapper>
             <ClientProviderRedux>
               {children}
