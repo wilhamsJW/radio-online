@@ -24,8 +24,8 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
   useEffect(() => {
     if (scopeRef.current) {
       // Define a animação pulsante
-      animate(scopeRef.current, { scale: [1, 1.05, 1] }, {
-        duration: 2.5,
+      animate(scopeRef.current, { scale: [0.9, 1, 0.9] }, {
+        duration: 4,
         repeat: Infinity,
         repeatType: 'loop',
         ease: 'easeInOut'
@@ -57,7 +57,7 @@ const PulsingCardNoList: React.FC<PulsingCardProps> = () => {
             Selecione uma rádio e comece a ouvir agora mesmo
           </Text>
           <Text fontSize="xs" mb={4} color={textColor} >
-            (Clique no botão abaixo)
+            {mediaQuery.isDesktopDrawer ? '(Clique no botão abaixo)' : '' } 
           </Text>
         </>}
       </Box>
