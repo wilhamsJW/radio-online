@@ -20,7 +20,8 @@ interface RegisterState {
   loggedUser: User | null;
   noListStationRadio: boolean,
   isLoading: boolean,
-  mediaQuery: MediaQueryState
+  mediaQuery: MediaQueryState,
+  removeIconCheckedList: string
 }
 
 const initialState: RegisterState = {
@@ -34,6 +35,7 @@ const initialState: RegisterState = {
   loggedUser: null,
   noListStationRadio: false,
   isLoading: false,
+  removeIconCheckedList: '',
   mediaQuery: {
     isMobile: false,
     isTablet: false,
@@ -86,7 +88,10 @@ const registerSlice = createSlice({
     },
     setMediaQuery(state, action: PayloadAction<MediaQueryState>) {
       state.mediaQuery = action.payload;
-    }
+    }, 
+    setRemoveIconCheckedList(state, action: PayloadAction<string>) {
+      state.removeIconCheckedList = action.payload;
+    },
   },
 });
 
@@ -102,7 +107,8 @@ export const {
   setLoggedUser, 
   setNoListStationRadio, 
   setIsLoading, 
-  setMediaQuery
+  setMediaQuery,
+  setRemoveIconCheckedList
  } = registerSlice.actions;
 
 export default registerSlice.reducer;
