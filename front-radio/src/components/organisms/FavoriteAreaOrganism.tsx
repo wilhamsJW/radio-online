@@ -5,7 +5,7 @@ import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import MotionMolecule from '../../components/molecules/MotionMolecule';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { setIsNewStationFavorite, setAudioState, setNoListStationRadio, setIsNewUrlAudio } from '../../store/slices/registerSlice';
+import { setIsNewStationFavorite, setAudioState, setNoListStationRadio, setIsNewUrlAudio, setRemoveIconCheckedList } from '../../store/slices/registerSlice';
 import AudioPlayer from '../molecules/AudioPlayerMolecule';
 import truncateText from '../../utils/truncateText'
 import { useAnimate, motion } from 'framer-motion';
@@ -208,6 +208,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
 
   const handleDelete = (id: string) => {
     if (loggedUser) {
+      dispatch(setRemoveIconCheckedList(id))
       // Obtém todas as estações de rádio do localStorage
       const allSelectedRadioStations = JSON.parse(localStorage.getItem('selectedRadioStations') || '[]');
 
@@ -289,10 +290,7 @@ const FavoriteAreaOrganism: React.FC<FavoriteAreaOrganismProps> = ({ filter = ''
   useEffect(() => {
     dispatch(setNoListStationRadio(filteredData.length === 0));
   }, [filteredData])
-
-  console.log('currentPage::',currentPage);
   
-
   return (
     <Box overflowY="auto" maxH="100%" w="100%" p={{ base: 2, md: 4 }}>
       <Table variant="simple" w="100%">

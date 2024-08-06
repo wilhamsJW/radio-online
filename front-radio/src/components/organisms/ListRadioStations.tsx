@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, VStack, Button, Flex, HStack, Icon, Divider, Input, useToast, useTheme, useColorMode, Text, Spinner } from '@chakra-ui/react';
+import { Box, VStack, Button, Flex, HStack, Divider, Input, useToast, useTheme, useColorMode, Text, Spinner } from '@chakra-ui/react';
 import useStations from '../../hooks/useStations';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -9,6 +9,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import truncateText from '@/utils/truncateText';
 import { SkipNext, SkipPrevious } from '../../../public/index'
+import { CheckedPlaylist } from '../../../public/index'
 
 interface RadioStation {
   name: string;
@@ -17,7 +18,9 @@ interface RadioStation {
   country: string;
   language: string;
   countrycode: string;
-  userId?: string
+  userId?: string;
+  addedByUser?: boolean;
+  changeuuid?: string
 }
 
 const ListRadioStations: React.FC = () => {
@@ -27,6 +30,9 @@ const ListRadioStations: React.FC = () => {
   const toast = useToast();
 
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Gerenciando dado e estados apenas com React Query, com isso a paginação
+  //dos dados é feita com dados buscado do cache sem a necessidade de dá refetching
   const { data, error, isLoading } = useStations(currentPage);
 
   const theme = useTheme();
@@ -34,11 +40,20 @@ const ListRadioStations: React.FC = () => {
   const listStationsBg = theme.colors[colorMode].fourth;
   const textColor = theme.colors[colorMode].secondary;
 
+  const [checkedMusic, setCheckedMusic] = useState<string[]>([]);
+
   const router = useRouter();
 
-  const { loggedUser } = useSelector((state: RootState) => ({
-    loggedUser: state.register.loggedUser
+  const { loggedUser, removeIconCheckedList } = useSelector((state: RootState) => ({
+    loggedUser: state.register.loggedUser,
+    removeIconCheckedList: state.register.removeIconCheckedList
   }));
+
+  useEffect(() => {
+    if (removeIconCheckedList) {
+      checkedMusicList(removeIconCheckedList)
+    }
+  }, [removeIconCheckedList])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -58,9 +73,9 @@ const ListRadioStations: React.FC = () => {
     localStorage.setItem('currentPage', currentPage.toString());
   }, [currentPage]);
 
-  if (isLoading) return (
+  if (isLoading && !data) return (
     <Flex
-      height="50vh" 
+      height="50vh"
       align="center"
       justify="center"
     >
@@ -100,8 +115,17 @@ const ListRadioStations: React.FC = () => {
     return allSelectedRadioStations.filter(item => item.userId === userId);
   };
 
-  const handleRadioClick = (newStationFavorite: RadioStation) => {
-    const userId = loggedUser?.email;
+  const checkedMusicList = (newStationFavorite: string | '') => {
+    if (!newStationFavorite) return;
+
+    setCheckedMusic(prevChecked =>
+      prevChecked.includes(newStationFavorite)
+        ? prevChecked.filter(id => id !== newStationFavorite) // Remove da lista
+        : [...prevChecked, newStationFavorite] // Adiciona à lista
+    );
+  };
+
+  const userNotLogged = (userId: any) => {
     if (!userId) {
       console.error("Usuário não está logado.");
       toast({
@@ -113,10 +137,18 @@ const ListRadioStations: React.FC = () => {
       });
       return;
     }
+  }
+
+  let isDisabledClickStation: boolean
+  const handleRadioClick = (newStationFavorite: RadioStation) => {
+    const userId = loggedUser?.email;
+    userNotLogged(loggedUser?.email)
+    checkedMusicList(newStationFavorite.changeuuid ? newStationFavorite.changeuuid : '')
 
     const newStationFavoriteWithUser = {
       ...newStationFavorite,
-      userId
+      userId,
+      addedByUser: true, // Adiciona o campo que indica que o usuário adicionou a rádio
     };
 
     // Obtém as estações de rádio armazenadas no localStorage
@@ -139,7 +171,7 @@ const ListRadioStations: React.FC = () => {
       localStorage.setItem('selectedRadioStations', JSON.stringify(allSelectedRadioStations));
 
       // Indica que a lista de estações não está vazia mais
-      dispatch(setNoListStationRadio(false))
+      dispatch(setNoListStationRadio(false));
 
       toast({
         title: "Estação de rádio adicionada com sucesso.",
@@ -161,8 +193,13 @@ const ListRadioStations: React.FC = () => {
     dispatch(setIsNewStationFavorite(true));
   };
 
+
   const handleClick = () => {
     router.push('/');
+  };
+
+  const shouldShowIcon = (station: RadioStation, checkedMusic: any) => {
+    return checkedMusic.includes(station?.changeuuid ? station?.changeuuid : '');
   };
 
   return (
@@ -197,28 +234,40 @@ const ListRadioStations: React.FC = () => {
         mb={4}
       />
 
-      <VStack spacing={3} align="stretch">
+      <VStack spacing={3} align="start">
         {paginatedRadios.length > 0 ? (
           paginatedRadios.map((station: RadioStation, index: number) => (
-            <Button
+            <Flex
               key={index}
               onClick={() => handleRadioClick(station)}
-              bg={listStationsBg}
+              // bg={listStationsBg}
+              bg={shouldShowIcon(station, checkedMusic) ? listStationsBg : "gray.300"} // Muda a cor de fundo se o ícone estiver exibido
               color="black"
-              borderRadius="md"
+              borderRadius="0.5rem"
               boxShadow="md"
               _hover={{ bg: "#858594" }}
-              p={8}
+              p={4}
               textAlign="left"
-              w="full"
+              w="11rem"
               alignSelf="center"
               fontSize="sm"
               overflow="hidden"
               textOverflow="ellipsis"
               whiteSpace="nowrap"
+              cursor={shouldShowIcon(station, checkedMusic) ? "not-allowed" : "pointer"} // Muda o cursor se o ícone estiver exibido
+              pointerEvents={shouldShowIcon(station, checkedMusic) ? "none" : "auto"} // Desabilita eventos de clique se o ícone estiver exibido
             >
-              {truncateText(station.name, 15)}
-            </Button>
+              <Box mr={2} display="flex" alignItems="center">
+                {/* {checkedMusic.includes(station?.changeuuid ? station?.changeuuid : '') && (
+                <CheckedPlaylist color="green" />
+              )} */}
+                {shouldShowIcon(station, checkedMusic) && <CheckedPlaylist color="green" />}
+                {isDisabledClickStation && <CheckedPlaylist color="green" />}
+              </Box>
+              <Text isTruncated>
+                {truncateText(station.name, 10)}
+              </Text>
+            </Flex>
           ))
         ) : (
           <Text color={textColor}>A busca pelas estações de rádio falhou, tente novamente!</Text>
