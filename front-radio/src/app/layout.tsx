@@ -4,7 +4,6 @@ import ChakraProviderWrapper from './chakra-provider';
 import ClientProviderRedux from './reduxProvider/reduxProvider';
 import ClientQueryProvider from './clientQueryProvider/ClientQueryProvider'
 import { metadata } from './metadata';
-import { DehydratedState } from 'react-query';
 
 /**
  * O Next.js 14 ou versão recente não aceita o Provider do Redux diretamente envolvendo
