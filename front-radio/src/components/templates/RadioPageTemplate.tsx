@@ -9,6 +9,8 @@ import { MdFavorite } from "react-icons/md";
 import { GiPocketRadio } from "react-icons/gi";
 import AddMusicDropDrow from '../molecules/AddMusicDropDrow'
 import { PlaylistAdd } from '../../../public/index'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const RadioLayout: React.FC = () => {
   const theme = useTheme();
@@ -17,6 +19,10 @@ const RadioLayout: React.FC = () => {
   const sidebarBg = theme.colors[colorMode].accent;
   const mainBg = theme.colors[colorMode].primary;
   const textColor = theme.colors[colorMode].secondary;
+
+  const { loggedUserName } = useSelector((state: RootState) => ({
+    loggedUserName: state.register.loggedUser?.displayName
+  }));
 
   return (
     <Flex h="100vh" direction="row">
@@ -73,9 +79,11 @@ const RadioLayout: React.FC = () => {
       {/** Área da lista de estações de rádio favorita */}
       <Box w={{ base: '100%', md: '80.9%' }} p={4} bg={mainBg}>
         <Flex direction="column" h="100%" bg={mainBg} color={textColor}>
+
+
           <Flex
             align="center"
-            direction="row"
+            direction="column" // Alinha os itens verticalmente
             p={1}
             display="flex"
             justifyContent="center" // Centraliza os itens horizontalmente
@@ -91,8 +99,23 @@ const RadioLayout: React.FC = () => {
               style={{ color: textColor, marginLeft: '0.5rem' }}
               size={24}
             />
+            {/* Novo item adicionado aqui */}
+            <Flex
+              direction="row"
+              align="center"
+              p={1}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Box mt={3} fontSize="sm" color={textColor}>
+                Que bom te ver aqui,
+              </Box>
+              <Box mt={3} fontSize="sm" color="highlightColor" ml={2}>
+                {loggedUserName}
+              </Box>
+            </Flex>
           </Flex>
-
           <Box
             position="relative"
             maxH="82vh"
@@ -113,7 +136,7 @@ const RadioLayout: React.FC = () => {
             <Box
               position="fixed"
               bottom={2}
-              right={4} 
+              right={4}
               zIndex="overlay" // Garante que o componente fique acima de outros conteúdos
             >
               <AddMusicDropDrow icon={<PlaylistAdd color={textColor} />} />
