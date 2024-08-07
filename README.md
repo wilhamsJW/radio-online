@@ -89,3 +89,51 @@ Em um mundo cada vez mais digital, muitos de nós sentimos falta das antigas est
    cd radio-browser-challenge
    npm install
    npm run dev e seja feliz :)
+
+   ## Melhorias Propostas para o Projeto
+
+### Melhorias de Funcionalidade
+
+1. **Autenticação e Autorização Avançadas:**
+   - **Autenticação de Múltiplos Fatores (MFA):** Adicione uma camada extra de segurança com autenticação de múltiplos fatores.
+   - **Controle de Acesso Baseado em Funções (RBAC):** Implemente controle de acesso granular para diferentes tipos de usuários (administradores, usuários regulares, etc.).
+
+2. **Notificações e Alertas:**
+   - **Notificações em Tempo Real:** Utilize WebSockets ou serviços como Firebase Cloud Messaging (FCM) para enviar notificações em tempo real aos usuários.
+   - **Alertas Personalizados:** Permita que os usuários configurem alertas personalizados baseados em suas preferências.
+
+3. **Integração com Serviços Externos:**
+   - **Integração com Redes Sociais:** Permita que os usuários se conectem e compartilhem informações através de redes sociais.
+   - **API de Música:** Considere integrar APIs de música adicionais para expandir as opções disponíveis para os usuários.
+
+4. **Melhoria na Experiência do Usuário (UX):**
+   - **Interface de Usuário (UI) Intuitiva:** Melhore a interface com elementos interativos e animações que proporcionem uma navegação mais fluida.
+   - **Design Responsivo Avançado:** Assegure que o design seja altamente responsivo e funcione bem em diferentes dispositivos e tamanhos de tela.
+
+5. **Gerenciamento de Estado Global:**
+   - **Otimização com Redux Toolkit:** Utilize Redux Toolkit para gerenciar o estado global de forma eficiente e escalável.
+
+### Melhorias de Tecnologia
+
+1. **Escalabilidade e Desempenho:**
+   - **Server-Side Rendering (SSR):** Utilize SSR com Next.js para melhorar o desempenho e a indexação em motores de busca.
+   - **Otimização de Performance:** Implemente técnicas de otimização como lazy loading e code splitting para melhorar o tempo de carregamento da aplicação.
+
+2. **Testes e Qualidade de Código:**
+   - **Testes Automatizados:** Expanda os testes automatizados com cobertura adicional usando Jest e React Testing Library.
+   - **Integração Contínua e Deploy Contínuo (CI/CD):** Configure pipelines de CI/CD para automatizar testes e deploys, garantindo uma entrega contínua e segura.
+
+3. **Infraestrutura e DevOps:**
+   - **Dockerização:** Crie contêineres Docker para garantir que seu ambiente de desenvolvimento seja consistente com o ambiente de produção.
+   - **Escalabilidade na Nuvem:** Utilize plataformas como Kubernetes para orquestrar e escalar containers conforme a demanda.
+
+4. **Documentação e Manutenção:**
+   - **Documentação Abrangente:** Mantenha uma documentação detalhada sobre a arquitetura, APIs, e processos de desenvolvimento.
+   - **Manutenção e Suporte:** Estabeleça um plano de manutenção regular e suporte para garantir a saúde contínua da aplicação.
+
+5. **Monitoramento e Logging:**
+   - **Monitoramento de Desempenho:** Utilize ferramentas de monitoramento como New Relic ou Datadog para acompanhar o desempenho e detectar problemas proativamente.
+   - **Sistema de Logging:** Implemente um sistema de logging eficiente para rastrear erros e eventos importantes na aplicação.
+
+Essas melhorias ajudarão a tornar o seu projeto mais robusto, escalável e preparado para o futuro, garantindo uma melhor experiência para os usuários e uma manutenção mais fácil.
+
