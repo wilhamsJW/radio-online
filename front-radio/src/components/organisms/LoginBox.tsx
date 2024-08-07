@@ -82,7 +82,30 @@ export default function LoginBox() {
         {isRegistering ? 'Cadastro' : 'Login'}
       </Heading>
       {!isRegistering && <SocialLoginButtons />}
-      <Divider borderColor="gray.400" my={12} />
+      <Divider borderColor="gray.400" my={7} />
+      {!isRegistering && <><HeadingAtom mt="1" size="md" textAlign="center" color="#FFFFFF">
+          <MotionMolecule>
+            <Heading
+              as="span"
+              size="md"
+              color="#FFFFFF"
+              textDecoration="none"
+            >
+              Não tem uma conta?{' '}
+            </Heading><br />
+            <Heading
+              as="span"
+              size="md"
+              color="#FFFFFF"
+              textDecoration="underline"
+              cursor="pointer"
+              onClick={handleRegisterClick}
+            >
+              Inscrever-se
+            </Heading>
+          </MotionMolecule>
+        </HeadingAtom>
+        <Divider borderColor="gray.400" my={7} /></>}
       {!isLoading ? (
         <LoginForm
           name={name}
@@ -119,7 +142,7 @@ export default function LoginBox() {
         />
       )}
       {!isRegistering && <Divider borderColor="gray.400" />}
-      {isRegistering ? (
+      {isRegistering && (
         <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
           <MotionMolecule>
             <Heading
@@ -131,29 +154,6 @@ export default function LoginBox() {
               onClick={handleRegisterClick}
             >
               Voltar ao Login
-            </Heading>
-          </MotionMolecule>
-        </HeadingAtom>
-      ) : (
-        <HeadingAtom mt="10" size="md" textAlign="center" color="#FFFFFF">
-          <MotionMolecule>
-            <Heading
-              as="span"
-              size="md"
-              color="#FFFFFF"
-              textDecoration="none"
-            >
-              Não tem uma conta?{' '}
-            </Heading>
-            <Heading
-              as="span"
-              size="md"
-              color="#FFFFFF"
-              textDecoration="underline"
-              cursor="pointer"
-              onClick={handleRegisterClick}
-            >
-              Inscrever-se
             </Heading>
           </MotionMolecule>
         </HeadingAtom>
