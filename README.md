@@ -74,11 +74,11 @@ Em um mundo cada vez mais digital, muitos de nós sentimos falta das antigas est
 
 ### Menu Mobile
 
-![Menu Mobile](../radio-online/front-radio/public/img/mobile-menu-radio.png)
+![Menu Mobile](./assets/main-mobile-menu.png)
 
 ### Tela para Desktop
 
-![Tela para Desktop](../radio-online/front-radio/public/img/desktop-radio.png)
+![Tela para Desktop](./assets/desktop-radio.png)
 
 ## Instalação e Uso
 
