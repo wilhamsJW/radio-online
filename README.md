@@ -70,11 +70,11 @@ Em um mundo cada vez mais digital, muitos de nós sentimos falta das antigas est
 
 ### Tela para Mobile
 
-![Tela para Mobile](./assets/mobile.png)
+![Tela para Mobile](./assets/main-mobile-menu.png)
 
 ### Menu Mobile
 
-![Menu Mobile](./assets/main-mobile-menu.png)
+![Menu Mobile](./assets/mobile-menu-radio.png)
 
 ### Tela para Desktop
 
