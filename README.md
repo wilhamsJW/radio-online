@@ -42,7 +42,7 @@ Em um mundo cada vez mais digital, muitos de nós sentimos falta das antigas est
 
 ### Funcionalidades Extras (DIFERENCIAIS)
 
-- **Testes Unitários e E2E:** Foram implementados testes para garantir a robustez da aplicação. (EM DOIS ARQUIVOS)
+- **Testes Unitários:** Foram implementados testes para garantir a robustez da aplicação. (EM DOIS ARQUIVOS)
 - **Publicação:** O projeto foi publicado em [Vercel](https://radio-online-v91w.vercel.app/) para acesso e visualização.
 
 ## Funcionalidades Adicionais
@@ -93,6 +93,27 @@ Em um mundo cada vez mais digital, muitos de nós sentimos falta das antigas est
    ## Melhorias Propostas para o Projeto
 
 ### Melhorias de Funcionalidade
+
+0. **Designer parttners e Clean Arcqui:** Pretendo adicionar um conceito ainda maior de padrões de projeto
+que não conseguir atender tudo em vista do tempo, mas deixo aqui os conceitos q uso no meu dia a dia:
+
+## 1. **Component-Based Pattern**
+   - **Descrição:** Envolve a construção da interface em componentes reutilizáveis e modulares. Cada componente é responsável por uma parte específica da UI.
+## 2. **Container/Presentational Pattern**
+   - **Descrição:** Separa a lógica de negócios da apresentação da UI. Containers gerenciam o estado e a lógica, enquanto os componentes de apresentação se concentram apenas na renderização.   
+## 3. **Observer Pattern**
+   - **Descrição:** Permite que objetos (observadores) se inscrevam para receber atualizações de outro objeto (sujeito) quando ocorre uma mudança.
+## 4. **Factory Pattern**
+   - **Descrição:** Cria objetos sem especificar a classe exata do objeto que será criado. Ideal para criar componentes ou serviços com base em configurações dinâmicas.
+## 5. **Decorator Pattern**
+   - **Descrição:** Adiciona funcionalidades a um objeto de forma dinâmica sem alterar o objeto original. Útil para adicionar comportamentos adicionais a componentes.
+   - **Ferramentas:** Higher-Order Components (HOCs).
+## 6. **Strategy Pattern**
+   - **Descrição:** Permite que um algoritmo varie independentemente dos clientes que o utilizam. Ideal para aplicar diferentes lógicas de comportamento em componentes.
+   - **Ferramentas:** Hooks personalizados.
+
+   Esse seriam os que mais uso no React mas tbm tenho conceitos de SOLID que aplico no front.
+s
 
 1. **Autenticação e Autorização Avançadas:**
    - **Autenticação de Múltiplos Fatores (MFA):** Adicione uma camada extra de segurança com autenticação de múltiplos fatores.
