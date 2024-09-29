@@ -3,7 +3,8 @@
 import { QueryClient, QueryClientProvider, Hydrate  } from 'react-query';
 import { ReactNode } from 'react';
 import { DehydratedState } from 'react-query';
-// import { ReactQueryDevtools } from 'react-query/devtools'; {/**Uso deve ser feito apenas em ambiente de desenvolvimento */}
+// import { ReactQueryDevtools } from 'react-query/devtools'; 
+{/**Uso deve ser feito apenas em ambiente de desenvolvimento */}
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,8 @@ const ClientQueryProvider = ({ children, dehydratedState }: ClientQueryProviderP
       <Hydrate state={dehydratedState}>
         {children}
       </Hydrate>
-      {/* <ReactQueryDevtools initialIsOpen={false}/> *Uso deve ser feito apenas em ambiente de desenvolvimento */}
+      {/* <ReactQueryDevtools initialIsOpen={false}/>  */}
+      {/* *Uso deve ser feito apenas em ambiente de desenvolvimento */}
     </QueryClientProvider>
   );
 };
